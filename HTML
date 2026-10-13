@@ -1,1 +1,407 @@
 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080817">
+<title>KRMAVERSO | KRMA STORE</title>
+
+<style>
+:root {
+  --bg:#080817;
+  --card:#14152c;
+  --purple:#914cff;
+  --blue:#45e2ff;
+  --pink:#ff4db8;
+  --white:#f8f7ff;
+  --muted:#b8b8d0;
+}
+* {box-sizing:border-box;margin:0;padding:0}
+html {scroll-behavior:smooth}
+body {
+  background:radial-gradient(ellipse at top,#292050 0%,var(--bg) 55%);
+  color:var(--white);
+  font-family:Arial,Helvetica,sans-serif;
+  line-height:1.5;
+}
+a {text-decoration:none;color:inherit}
+button,input {font:inherit}
+.wrap {width:min(1100px,92%);margin:auto}
+header {
+  position:sticky;top:0;z-index:10;
+  background:#09091aee;backdrop-filter:blur(12px);
+  border-bottom:1px solid #ffffff20;
+}
+nav {
+  min-height:68px;display:flex;align-items:center;
+  justify-content:space-between;gap:10px;
+}
+.logo {font-size:1.25rem;font-weight:900}
+.logo span {color:var(--blue)}
+.btn {
+  display:inline-flex;align-items:center;justify-content:center;
+  border:0;border-radius:12px;padding:12px 16px;
+  font-weight:bold;cursor:pointer;transition:.2s;
+}
+.btn:hover {transform:translateY(-2px)}
+.primary {background:linear-gradient(100deg,var(--blue),#b1f7ff);color:#080817}
+.purple {background:linear-gradient(100deg,var(--purple),var(--pink));color:white}
+.dark {background:#242443;color:white;border:1px solid #ffffff20}
+.hero {padding:72px 0 45px;text-align:center}
+.pill {
+  display:inline-block;border:1px solid #45e2ff77;
+  color:var(--blue);padding:7px 13px;border-radius:30px;
+  background:#45e2ff12;font-size:.85rem;margin-bottom:20px
+}
+h1 {font-size:clamp(2.4rem,8vw,4.8rem);line-height:1.05;margin-bottom:18px}
+.gradient {
+  background:linear-gradient(90deg,var(--blue),#bd92ff,var(--pink));
+  color:transparent;background-clip:text;-webkit-background-clip:text
+}
+.hero p {color:var(--muted);max-width:650px;margin:0 auto 24px}
+.actions {display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.perks {
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:12px;padding:15px 0 48px
+}
+.perk {padding:17px;border:1px solid #ffffff18;border-radius:15px;background:#ffffff08;text-align:center}
+.perk b {display:block;margin:5px}
+.perk small {color:var(--muted)}
+section {padding:20px 0 48px}
+.heading {margin-bottom:22px}
+.heading h2 {font-size:clamp(1.7rem,5vw,2.4rem)}
+.heading p {color:var(--muted)}
+.search {
+  width:100%;padding:14px 16px;border-radius:12px;
+  border:1px solid #ffffff25;background:var(--card);
+  color:white;margin-bottom:13px;outline:none
+}
+.search:focus {border-color:var(--blue)}
+.filters {display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.filter {
+  padding:9px 14px;border-radius:25px;border:1px solid #ffffff20;
+  background:var(--card);color:var(--muted);cursor:pointer
+}
+.filter.active {color:white;border-color:var(--purple);background:#914cff35}
+.products {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.product {
+  background:linear-gradient(150deg,#1c1c3c,var(--card));
+  border:1px solid #ffffff19;border-radius:17px;overflow:hidden;
+  display:flex;flex-direction:column
+}
+.art {
+  height:130px;display:grid;place-items:center;font-size:3.4rem;
+  background:radial-gradient(circle,#563a8a55,transparent 70%),#101024
+}
+.info {padding:16px;display:flex;flex-direction:column;flex:1}
+.tag {color:var(--blue);font-size:.76rem;text-transform:uppercase;font-weight:bold}
+.info h3 {margin:5px 0}
+.info p {font-size:.88rem;color:var(--muted);margin-bottom:16px;flex:1}
+.price {font-weight:bold;margin-bottom:12px}
+.info button {width:100%}
+.empty {grid-column:1/-1;text-align:center;padding:30px;color:var(--muted)}
+.panel {
+  border:1px solid #ffffff20;border-radius:18px;padding:20px;
+  background:linear-gradient(135deg,#1c1b3a,#101024)
+}
+.cart-row {
+  display:flex;justify-content:space-between;align-items:center;
+  gap:12px;padding:13px 0;border-bottom:1px solid #ffffff18
+}
+.cart-row small {display:block;color:var(--muted)}
+.remove {background:none;border:0;color:#ff8abf;cursor:pointer;padding:8px}
+.total {display:flex;justify-content:space-between;font-weight:bold;font-size:1.1rem;margin:20px 0}
+.note {font-size:.86rem;color:var(--muted);margin:12px 0}
+.cart-actions {display:flex;gap:10px;flex-wrap:wrap}
+.cart-actions .btn {flex:1}
+.contact {
+  text-align:center;padding:30px 20px;border-radius:20px;
+  border:1px solid #ffffff20;
+  background:linear-gradient(120deg,#914cff25,#45e2ff12)
+}
+.contact p {max-width:600px;margin:10px auto 20px;color:var(--muted)}
+footer {border-top:1px solid #ffffff20;text-align:center;padding:25px;color:var(--muted);font-size:.85rem}
+footer p {margin:4px}
+@media(max-width:760px) {
+  .products {grid-template-columns:repeat(2,minmax(0,1fr))}
+  .hero {padding-top:50px}
+}
+@media(max-width:500px) {
+  .products {grid-template-columns:1fr}
+  .art {height:115px}
+  .perks {grid-template-columns:1fr;gap:8px}
+  .perk {display:flex;align-items:center;gap:10px;text-align:left}
+  .perk small {margin-left:auto}
+  nav .btn {padding:9px;font-size:.85rem}
+  .logo {font-size:1rem}
+}
+</style>
+</head>
+
+<body>
+<header>
+  <nav class="wrap">
+    <a class="logo" href="#inicio">🌌 KRMA<span>VERSO</span></a>
+    <a class="btn dark" href="#carrito">🛒 Carrito <span id="count">0</span></a>
+  </nav>
+</header>
+
+<main>
+<section class="hero" id="inicio">
+  <div class="wrap">
+    <span class="pill">🚀 BIENVENIDO A TU UNIVERSO DIGITAL</span>
+    <h1>EL SIGUIENTE NIVEL<br><span class="gradient">COMIENZA AQUÍ</span></h1>
+    <p>
+      Gaming, recargas y productos digitales en un solo lugar.
+      Explora el catálogo, prepara tu pedido y consulta directamente
+      con KRMA STORE.
+    </p>
+    <div class="actions">
+      <a class="btn primary" href="#catalogo">🎮 Ver catálogo</a>
+      <a class="btn purple" href="https://t.me/KrmaFree" target="_blank" rel="noopener">✈️ Telegram</a>
+    </div>
+  </div>
+</section>
+
+<div class="wrap perks">
+  <div class="perk"><span>🎮</span><b>Universo gaming</b><small>Opciones para jugadores</small></div>
+  <div class="perk"><span>⚡</span><b>Atención directa</b><small>Consulta disponibilidad</small></div>
+  <div class="perk"><span>🌌</span><b>Tu propio combo</b><small>Solicita una cotización</small></div>
+</div>
+
+<section id="catalogo">
+<div class="wrap">
+  <div class="heading">
+    <h2>Explora el <span class="gradient">catálogo</span></h2>
+    <p>Selecciona lo que te interesa y arma tu pedido.</p>
+  </div>
+
+  <input class="search" id="search" type="search" placeholder="🔎 Buscar productos..." aria-label="Buscar productos">
+
+  <div class="filters" id="filters">
+    <button class="filter active" data-filter="Todos">Todos</button>
+    <button class="filter" data-filter="Gaming">🎮 Gaming</button>
+    <button class="filter" data-filter="Recargas">💎 Recargas</button>
+    <button class="filter" data-filter="Entretenimiento">🎬 Entretenimiento</button>
+    <button class="filter" data-filter="Digital">💻 Digital</button>
+  </div>
+
+  <div class="products" id="products"></div>
+</div>
+</section>
+
+<section id="carrito">
+<div class="wrap">
+  <div class="heading">
+    <h2>🛒 Tu pedido</h2>
+    <p>Comprueba tu selección antes de enviarla.</p>
+  </div>
+  <div class="panel">
+    <div id="items"><p class="note">Todavía no has agregado productos.</p></div>
+    <div class="total"><span>Total conocido</span><span id="total">$0 COP</span></div>
+    <p class="note">Los precios por confirmar no se incluyen en el total. Verifica disponibilidad, condiciones y precio final antes de pagar.</p>
+    <div class="cart-actions">
+      <button class="btn primary" id="send">✈️ Enviar pedido por Telegram</button>
+      <button class="btn dark" id="clear">Vaciar carrito</button>
+    </div>
+  </div>
+</div>
+</section>
+
+<section id="contacto">
+<div class="wrap">
+  <div class="contact">
+    <h2>¿Listo para entrar al Karmaverso?</h2>
+    <p>Escríbenos para confirmar precios, disponibilidad y condiciones de los productos.</p>
+    <a class="btn purple" href="https://t.me/KrmaFree" target="_blank" rel="noopener">Contactar a @KrmaFree</a>
+  </div>
+</div>
+</section>
+</main>
+
+<footer>
+  <p><strong>KRMA STORE · KRMAVERSO</strong></p>
+  <p>Catálogo independiente de productos digitales.</p>
+  <p>Las marcas pertenecen a sus respectivos propietarios.</p>
+  <p>© <span id="year"></span> KRMA STORE</p>
+</footer>
+
+<script>
+"use strict";
+
+// Edita esta lista para cambiar productos y precios.
+// price: null significa que debes confirmar el precio con el cliente.
+
+const products = [
+  {id:1,name:"Robux",category:"Gaming",icon:"🟩",desc:"Consulta opciones disponibles para Roblox.",price:null},
+  {id:2,name:"Diamantes Free Fire",category:"Recargas",icon:"💎",desc:"Consulta cantidades y recargas disponibles.",price:null},
+  {id:3,name:"Tarjetas de regalo",category:"Gaming",icon:"🎁",desc:"Consulta denominaciones y regiones compatibles.",price:null},
+  {id:4,name:"Recargas gaming",category:"Recargas",icon:"🎮",desc:"Indica el juego y la recarga que necesitas.",price:null},
+  {id:5,name:"Entretenimiento digital",category:"Entretenimiento",icon:"🎬",desc:"Consulta planes que estén autorizados para su comercialización.",price:null},
+  {id:6,name:"Música digital",category:"Entretenimiento",icon:"🎧",desc:"Pregunta por opciones y condiciones disponibles.",price:null},
+  {id:7,name:"Herramientas digitales",category:"Digital",icon:"💻",desc:"Consulta licencias y planes digitales.",price:null},
+  {id:8,name:"Juegos para PC",category:"Gaming",icon:"🖥️",desc:"Consulta juegos y claves de procedencia legítima.",price:null},
+  {id:9,name:"Combo personalizado",category:"Digital",icon:"✨",desc:"Cuéntanos qué productos quieres combinar.",price:null}
+];
+
+let category = "Todos";
+let cart = [];
+
+const $ = id => document.getElementById(id);
+
+function money(value) {
+  return new Intl.NumberFormat("es-CO", {
+    style:"currency",currency:"COP",maximumFractionDigits:0
+  }).format(value);
+}
+
+function element(tag, className, text) {
+  const el = document.createElement(tag);
+  if (className) el.className = className;
+  if (text !== undefined) el.textContent = text;
+  return el;
+}
+
+function renderProducts() {
+  const query = $("search").value.trim().toLowerCase();
+  const list = products.filter(p =>
+    (category === "Todos" || p.category === category) &&
+    (p.name + " " + p.desc + " " + p.category).toLowerCase().includes(query)
+  );
+
+  $("products").replaceChildren();
+
+  if (!list.length) {
+    $("products").appendChild(element("p","empty","No encontramos productos con esa búsqueda."));
+    return;
+  }
+
+  list.forEach(p => {
+    const card = element("article","product");
+    const art = element("div","art",p.icon);
+    art.setAttribute("aria-hidden","true");
+
+    const info = element("div","info");
+    info.appendChild(element("span","tag",p.category));
+    info.appendChild(element("h3","",p.name));
+    info.appendChild(element("p","",p.desc));
+    info.appendChild(element("div","price",p.price === null ? "Consultar precio" : money(p.price)));
+
+    const btn = element("button","btn primary","＋ Agregar al pedido");
+    btn.type = "button";
+    btn.addEventListener("click",() => {
+      const found = cart.find(item => item.id === p.id);
+      if (found) found.qty++;
+      else cart.push({...p,qty:1});
+      renderCart();
+    });
+
+    info.appendChild(btn);
+    card.append(art,info);
+    $("products").appendChild(card);
+  });
+}
+
+function renderCart() {
+  $("items").replaceChildren();
+  $("count").textContent = cart.reduce((sum,p) => sum + p.qty,0);
+
+  const total = cart.reduce((sum,p) =>
+    sum + (p.price === null ? 0 : p.price * p.qty),0
+  );
+  $("total").textContent = money(total);
+
+  if (!cart.length) {
+    $("items").appendChild(element("p","note","Todavía no has agregado productos."));
+    return;
+  }
+
+  cart.forEach(p => {
+    const row = element("div","cart-row");
+    const info = element("div");
+    info.appendChild(element("strong","",p.icon+" "+p.name+" × "+p.qty));
+    info.appendChild(element("small","",p.price === null ? "Precio por confirmar" : money(p.price*p.qty)));
+
+    const remove = element("button","remove","Quitar");
+    remove.type = "button";
+    remove.addEventListener("click",() => {
+      cart = cart.filter(item => item.id !== p.id);
+      renderCart();
+    });
+
+    row.append(info,remove);
+    $("items").appendChild(row);
+  });
+}
+
+$("filters").addEventListener("click",event => {
+  const btn = event.target.closest("[data-filter]");
+  if (!btn) return;
+  category = btn.dataset.filter;
+
+  document.querySelectorAll(".filter").forEach(b =>
+    b.classList.toggle("active",b === btn)
+  );
+  renderProducts();
+});
+
+$("search").addEventListener("input",renderProducts);
+
+$("clear").addEventListener("click",() => {
+  cart = [];
+  renderCart();
+});
+
+$("send").addEventListener("click",async() => {
+  if (!cart.length) {
+    alert("Agrega al menos un producto primero.");
+    return;
+  }
+
+  const lines = cart.map(p =>
+    "- "+p.name+" x"+p.qty+" — "+
+    (p.price === null ? "precio por confirmar" : money(p.price*p.qty))
+  );
+
+  const total = cart.reduce((sum,p) =>
+    sum+(p.price === null ? 0 : p.price*p.qty),0
+  );
+
+  const unknown = cart.some(p => p.price === null);
+
+  const message = [
+    "¡Hola KRMA STORE! Quiero consultar este pedido:",
+    "",
+    ...lines,
+    "",
+    "Total conocido: "+money(total),
+    unknown ? "Hay precios pendientes de confirmar." : "Por favor confirma el total final.",
+    "Quiero confirmar disponibilidad, condiciones y método de entrega."
+  ].join("\n");
+
+  let copied = false;
+
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(message);
+      copied = true;
+    }
+  } catch(e) {}
+
+  if (!copied) {
+    window.prompt("Copia tu pedido y pégalo en Telegram:",message);
+  } else {
+    alert("Pedido copiado. Ahora pégalo en el chat de Telegram.");
+  }
+
+  window.open("https://t.me/KrmaFree","_blank","noopener,noreferrer");
+});
+
+$("year").textContent = new Date().getFullYear();
+renderProducts();
+renderCart();
+</script>
+</body>
+</html>
+
