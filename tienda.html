@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,7 +7,7 @@
 <meta name="theme-color" content="#070817">
 <title>KrmaVerso Store | Catálogo digital</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 :root{--bg:#060716;--cyan:#00eaff;--purple:#9b5cff;--muted:#b9bfd8}
 *{box-sizing:border-box}
@@ -40,33 +41,31 @@ h2{font-size:clamp(1.1rem,3vw,1.4rem);color:#d3b5ff;margin:42px 0 16px}
 .item{background:linear-gradient(145deg,#171a39,#0d1022);border:1px solid #37336d;border-radius:16px;padding:17px;display:flex;flex-direction:column;min-height:250px;transition:.2s}
 .item:hover{transform:translateY(-3px);border-color:var(--cyan);box-shadow:0 8px 25px #00eaff16}
 .apphead{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-.appicon{width:48px;height:48px;border-radius:13px;background:white;display:grid;place-items:center;flex:none;padding:8px}
+.appicon{width:48px;height:48px;border-radius:13px;background:white;display:grid;place-items:center;flex:none;padding:8px;color:#111;font-size:25px}
 .appicon img{width:100%;height:100%;object-fit:contain}
-.fallback{font-size:25px}
 .tag{font-size:.7rem;color:var(--cyan);font-weight:800}
 .item h3{margin:0;font-size:1rem}
 .price{font-family:Orbitron,sans-serif;font-size:1.12rem;font-weight:800;color:var(--cyan);margin:8px 0 12px}
 .price small{font:600 .68rem Inter,sans-serif;color:var(--muted)}
 .item p{color:var(--muted);font-size:.87rem;line-height:1.5;flex:1}
 .actions{display:grid;gap:9px;margin-top:12px}
-.buy,.pay-product{display:block;text-align:center;padding:11px 8px;border-radius:9px;text-decoration:none;font-size:.82rem;font-weight:800}
+.buy,.pay-product{display:block;text-align:center;padding:11px 8px;border-radius:9px;text-decoration:none;font-size:.82rem;font-weight:800;border:0;cursor:pointer}
 .buy{background:linear-gradient(90deg,#20d879,#00a86b);color:#04180e}
 .pay-product{background:linear-gradient(90deg,var(--cyan),#b28aff);color:#080817}
 .notice{margin-top:30px;border:1px solid #67519d;background:#171333;padding:17px;border-radius:12px;color:#d8d4ef;font-size:.88rem;line-height:1.65}
 footer{text-align:center;color:var(--muted);padding:25px;border-top:1px solid #29264d}
 footer a{color:var(--cyan)}
 .empty{color:var(--muted);padding:20px;display:none}
-
-/* CUENTAS KRMA VERSO */
 .account{margin:28px 0}
 .account h2{margin-top:0}
 .account input,.account select{width:100%;padding:12px;margin:6px 0 12px;border-radius:9px;border:1px solid #49417d;background:#0b1025;color:white;font:inherit}
+.account input[type=checkbox]{width:auto}
 .account button{border:0;border-radius:9px;padding:12px 16px;margin:5px 4px 5px 0;background:linear-gradient(90deg,var(--cyan),#b28aff);color:#080817;font-weight:800;cursor:pointer}
 .account button.secondary{background:#29234b;color:white;border:1px solid #6853a0}
 .account button.danger{background:#852b53;color:white}
 .account label{font-size:.85rem;color:#d8d4ef}
 .account-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}
-.account-box{background:#0c1028;border:1px solid #49417d;border-radius:13px;padding:16px;margin:12px 0}
+.account-box{background:#0c1028;border:1px solid #49417d;border-radius:13px;padding:16px;margin:12px 0;min-width:0}
 .account-box strong{color:var(--cyan)}
 .account small,.account .muted{color:var(--muted)}
 .account-status{color:#8fffc2;font-size:.9rem;line-height:1.5}
@@ -74,11 +73,12 @@ footer a{color:var(--cyan)}
 .coupon{padding:12px;margin:9px 0;border:1px dashed var(--cyan);border-radius:10px;background:#071b2b}
 #accountMessage{white-space:pre-wrap;color:#a9f5d0;font-size:.9rem;margin-top:12px}
 #accountError{white-space:pre-wrap;color:#ff9eae;font-size:.9rem;margin-top:12px}
+.order{padding:12px;margin:9px 0;background:#111832;border:1px solid #49417d;border-radius:10px;overflow-wrap:anywhere}
 @media(max-width:720px){.payment{grid-template-columns:1fr}nav{justify-content:center}.wrap{padding-top:22px}}
 </style>
 </head>
-<body>
 
+<body>
 <header>
 <nav>
 <a class="brand" href="index.html">🌌 KRMAVERSO STORE</a>
@@ -101,10 +101,9 @@ colombianos (COP). Selecciona un producto para comprar o consultar.
 </p>
 </section>
 
-<!-- CUENTAS, BONOS Y REFERIDOS -->
 <section class="account" id="cuenta">
 <h2>👤 MI CUENTA KRMAVERSO</h2>
-<p class="intro">Regístrate o inicia sesión para consultar tus puntos, descuentos y código de referido.</p>
+<p class="intro">Regístrate o inicia sesión para consultar tus descuentos, pedidos y código de referido.</p>
 
 <div id="authPanel">
 <div class="account-grid">
@@ -112,10 +111,18 @@ colombianos (COP). Selecciona un producto para comprar o consultar.
 <h3>✨ Crear cuenta</h3>
 <label for="regName">Nombre</label>
 <input id="regName" type="text" placeholder="Tu nombre" autocomplete="name">
+
 <label for="regEmail">Correo electrónico</label>
 <input id="regEmail" type="email" placeholder="correo@ejemplo.com" autocomplete="email">
-<label for="regPassword">Contraseña (mínimo 8 caracteres)</label>
+
+<label for="regPassword">Contraseña (mínimo 10 caracteres)</label>
 <input id="regPassword" type="password" placeholder="Crea una contraseña" autocomplete="new-password">
+
+<label>
+<input id="acceptPolicy" type="checkbox">
+Acepto el tratamiento de mis datos personales y la política de privacidad.
+</label>
+
 <button id="registerBtn">REGISTRARME</button>
 </div>
 
@@ -123,10 +130,11 @@ colombianos (COP). Selecciona un producto para comprar o consultar.
 <h3>🔐 Iniciar sesión</h3>
 <label for="loginEmail">Correo electrónico</label>
 <input id="loginEmail" type="email" placeholder="Tu correo" autocomplete="email">
+
 <label for="loginPassword">Contraseña</label>
 <input id="loginPassword" type="password" placeholder="Tu contraseña" autocomplete="current-password">
+
 <button id="loginBtn">INICIAR SESIÓN</button>
-<button class="secondary" id="resetBtn">RECUPERAR CONTRASEÑA</button>
 </div>
 </div>
 </div>
@@ -136,12 +144,14 @@ colombianos (COP). Selecciona un producto para comprar o consultar.
 <p class="account-status">✅ Sesión iniciada</p>
 <h3>¡Hola, <span id="profileName">cliente</span>!</h3>
 <p class="muted" id="profileEmail"></p>
+
 <div class="account-grid">
 <div class="account-box">
-<small>TUS PUNTOS / BONOS</small>
-<h2><span id="profilePoints">0</span> puntos</h2>
-<p class="muted">Consulta con KRMA cómo redimir tus beneficios.</p>
+<small>BENEFICIO DE PRIMERA COMPRA</small>
+<h3 id="firstPurchase">Consultando...</h3>
+<p class="muted">El descuento se calcula automáticamente al crear tu pedido.</p>
 </div>
+
 <div class="account-box">
 <small>TU CÓDIGO DE REFERIDO</small>
 <h3 id="referralCode">Cargando...</h3>
@@ -156,9 +166,13 @@ colombianos (COP). Selecciona un producto para comprar o consultar.
 </div>
 
 <div class="account-box">
+<h3>🧾 Mis pedidos</h3>
+<div id="myOrders">Cargando pedidos...</div>
+</div>
+
+<div class="account-box">
 <h3>🤝 Invita a tus amigos</h3>
-<p class="intro">Comparte tu enlace. Cuando un amigo se registre con tu código, aparecerá como referido. Las recompensas se validan después de confirmar las compras.</p>
-<p id="referralCount">Consultando referidos...</p>
+<p class="intro">Comparte tu enlace. Cuando un amigo se registre con tu código y confirme su primera compra, se procesarán las recompensas correspondientes.</p>
 </div>
 
 <button class="secondary" id="refreshProfileBtn">ACTUALIZAR MI CUENTA</button>
@@ -166,28 +180,14 @@ colombianos (COP). Selecciona un producto para comprar o consultar.
 </div>
 
 <div id="adminPanel" class="account-box hidden">
-<h3>🛠️ ADMINISTRACIÓN KRMA</h3>
-<p class="intro">Herramientas para gestionar bonos y cupones de tus clientes.</p>
-<h3>Otorgar puntos</h3>
-<label for="adminUserId">ID del cliente</label>
-<input id="adminUserId" placeholder="UUID del cliente">
-<label for="adminPoints">Cantidad de puntos</label>
-<input id="adminPoints" type="number" min="1" placeholder="Ej. 100">
-<button id="givePointsBtn">ASIGNAR PUNTOS</button>
+<h3>🛠️ ADMINISTRACIÓN KRMAVERSO</h3>
+<p class="intro">Consulta pedidos pendientes y confirma pagos recibidos.</p>
 
-<h3>Crear cupón para un cliente</h3>
-<label for="couponUserId">ID del cliente</label>
-<input id="couponUserId" placeholder="UUID del cliente">
-<label for="couponCode">Código del cupón</label>
-<input id="couponCode" placeholder="Ej. KRMA10">
-<label for="couponDiscount">Descuento (%)</label>
-<input id="couponDiscount" type="number" min="1" max="100" placeholder="10">
-<label for="couponExpiry">Fecha de vencimiento</label>
-<input id="couponExpiry" type="date">
-<button id="createCouponBtn">CREAR CUPÓN</button>
+<label for="adminSecret">Clave administrativa de Render</label>
+<input id="adminSecret" type="password" placeholder="Introduce tu ADMIN_SECRET">
 
-<h3>Clientes registrados</h3>
-<div id="adminCustomers">Cargando...</div>
+<button id="loadAdminBtn">CARGAR PEDIDOS</button>
+<div id="adminOrders"></div>
 </div>
 
 <div id="accountMessage"></div>
@@ -201,8 +201,9 @@ colombianos (COP). Selecciona un producto para comprar o consultar.
 <h2>¡Paga fácil y de forma segura!</h2>
 <p>Realiza tu pago directamente desde el checkout oficial de Wompi.</p>
 <a class="pay" href="https://checkout.wompi.co/l/VPOS_P4mjTE" target="_blank" rel="noopener noreferrer">💳 ABRIR PAGO WOMPI ↗</a>
-<p class="paynote">Confirma primero el producto y el valor exacto por WhatsApp. Verifica el importe en Wompi antes de autorizar el pago. Los cupones deben validarse antes del pago.</p>
+<p class="paynote">Confirma primero el producto y el valor exacto por WhatsApp. Verifica el importe en Wompi antes de autorizar el pago.</p>
 </div>
+
 <div class="qr">
 <img src="https://api.qrserver.com/v1/create-qr-code/?size=270x270&data=https%3A%2F%2Fcheckout.wompi.co%2Fl%2FVPOS_P4mjTE" alt="QR de pago Wompi">
 <strong>Escanea para pagar con Wompi</strong>
@@ -240,375 +241,572 @@ Solo se ofrecerán productos y licencias cuya distribución esté autorizada.
 </footer>
 
 <script>
-/* ======================================================
-   CONFIGURACIÓN SUPABASE
-   Reemplaza estos dos valores por los de tu proyecto.
-   Nunca pongas aquí la clave service_role.
-====================================================== */
-const SUPABASE_URL = 'PEGA_AQUI_TU_URL_SUPABASE';
-const SUPABASE_ANON_KEY = 'PEGA_AQUI_TU_CLAVE_PUBLICA_SUPABASE';
+/* =====================================================
+   CONFIGURACIÓN DE RENDER + POSTGRESQL
+===================================================== */
 
-let db = null;
+/* CAMBIA ESTA URL POR LA URL PÚBLICA DE TU API EN RENDER */
+const API_BASE = 'https://TU-SERVICIO.onrender.com';
+
+const WOMPI = 'https://checkout.wompi.co/l/VPOS_P4mjTE';
+const WHATSAPP = 'https://wa.me/573215201208?text=';
+
+let token = localStorage.getItem('krma_token') || '';
 let currentUser = null;
-let currentProfile = null;
+let productos = [];
+let adminSecret = '';
 
-const WOMPI='https://checkout.wompi.co/l/VPOS_P4mjTE';
-const WHATSAPP='https://wa.me/573215201208?text=';
+const $ = id => document.getElementById(id);
 
-const productos = [
-{nombre:'Netflix — Perfil (25 días)',icono:'netflix',categoria:'Entretenimiento',descripcion:'Perfil por 25 días.',precio:12500},
-{nombre:'Netflix — Plan/perfil (33 días)',icono:'netflix',categoria:'Entretenimiento',descripcion:'Plan o perfil por 33 días.',precio:15200},
-{nombre:'Netflix — Plan/perfil (30 días)',icono:'netflix',categoria:'Entretenimiento',descripcion:'Plan o perfil por 30 días.',precio:14500},
-{nombre:'Netflix — Internacional',icono:'netflix',categoria:'Entretenimiento',descripcion:'Modalidad internacional.',precio:12500},
-{nombre:'Netflix — Perfil privado',icono:'netflix',categoria:'Entretenimiento',descripcion:'Perfil privado según disponibilidad.',precio:18000},
-{nombre:'Amazon Prime Video — Pantalla',icono:'primevideo',categoria:'Entretenimiento',descripcion:'Acceso por pantalla.',precio:7000},
-{nombre:'Prime Video — Otra modalidad',icono:'primevideo',categoria:'Entretenimiento',descripcion:'Modalidad adicional.',precio:5000},
-{nombre:'Max / HBO Max',icono:'hbo',categoria:'Entretenimiento',descripcion:'Series, películas y documentales.',precio:10000},
-{nombre:'Max / HBO Max Platinum',icono:'hbo',categoria:'Entretenimiento',descripcion:'Series, películas y documentales.',precio:13000},
-{nombre:'Disney+ — Premium',icono:'disneyplus',categoria:'Entretenimiento',descripcion:'Modalidad Premium.',precio:9000},
-{nombre:'Disney+ — Estándar',icono:'disneyplus',categoria:'Entretenimiento',descripcion:'Modalidad Estándar.',precio:5900},
-{nombre:'Paramount+ — Pantalla',icono:'paramountplus',categoria:'Entretenimiento',descripcion:'Acceso por pantalla.',precio:8000},
-{nombre:'ViX Premium — Pantalla',icono:'vix',categoria:'Entretenimiento',descripcion:'Acceso Premium por pantalla.',precio:6000},
-{nombre:'Crunchyroll — Pantalla',icono:'crunchyroll',categoria:'Entretenimiento',descripcion:'Acceso por pantalla.',precio:6000},
-{nombre:'Plex Premium — Pantalla',icono:'plex',categoria:'Entretenimiento',descripcion:'Acceso por pantalla.',precio:7000},
-{nombre:'Jellyfin',icono:'jellyfin',categoria:'Entretenimiento',descripcion:'Plan o acceso según disponibilidad.',precio:9500},
-{nombre:'Tele Latino',icono:'tv',categoria:'Entretenimiento',descripcion:'Plan sujeto a disponibilidad.',precio:10000},
-{nombre:'Viki — Pantalla',icono:'rakuten',categoria:'Entretenimiento',descripcion:'Acceso por pantalla.',precio:8500},
-{nombre:'YouTube Premium — 1 mes',icono:'youtube',categoria:'Música',descripcion:'Suscripción por 1 mes.',precio:13000},
-{nombre:'YouTube Premium — Familiar',icono:'youtube',categoria:'Música',descripcion:'Plan familiar.',precio:17500},
-{nombre:'YouTube Premium — Invitación',icono:'youtube',categoria:'Música',descripcion:'Acceso por invitación.',precio:16000},
-{nombre:'Spotify Premium — 1 mes',icono:'spotify',categoria:'Música',descripcion:'Suscripción por 1 mes.',precio:10500},
-{nombre:'Spotify Premium — 3 meses',icono:'spotify',categoria:'Música',descripcion:'Duración de 3 meses.',precio:21000},
-{nombre:'Spotify Premium — 6 meses',icono:'spotify',categoria:'Música',descripcion:'Duración de 6 meses.',precio:39000},
-{nombre:'Spotify Premium — 1 año',icono:'spotify',categoria:'Música',descripcion:'Duración de 1 año.',precio:83000},
-{nombre:'Spotify Premium — Plan regular',icono:'spotify',categoria:'Música',descripcion:'Consulta modalidad y disponibilidad.',precio:15000},
-{nombre:'Deezer Premium',icono:'deezer',categoria:'Música',descripcion:'Plan Premium.',precio:8000},
-{nombre:'Combo Netflix + Spotify',icono:'spotify',categoria:'Combos',descripcion:'Combo según modalidad disponible.',precio:21000},
-{nombre:'Gemini IA — 12 meses',icono:'googlegemini',categoria:'Inteligencia artificial',descripcion:'Plan de 12 meses; confirmar modalidad.',precio:33000},
-{nombre:'Gemini IA — 1 mes',icono:'googlegemini',categoria:'Inteligencia artificial',descripcion:'Plan de 1 mes.',precio:15000},
-{nombre:'ChatGPT Go — Compartida',icono:'openai',categoria:'Inteligencia artificial',descripcion:'Acceso compartido según condiciones.',precio:13000},
-{nombre:'ChatGPT Plus',icono:'openai',categoria:'Inteligencia artificial',descripcion:'Plan según modalidad contratada.',precio:16000},
-{nombre:'Canva Pro — 3 meses',icono:'canva',categoria:'Diseño y productividad',descripcion:'Duración de 3 meses.',precio:12000},
-{nombre:'Canva Pro',icono:'canva',categoria:'Diseño y productividad',descripcion:'Herramientas de diseño.',precio:6000},
-{nombre:'Microsoft Office 365 — 1 año',icono:'microsoftoffice',categoria:'Diseño y productividad',descripcion:'Licencia o acceso por 1 año.',precio:19000},
-{nombre:'Google One — 5TB',icono:'googleone',categoria:'Diseño y productividad',descripcion:'Almacenamiento en la nube.',precio:15000},
-{nombre:'Filmora',icono:'wondershare',categoria:'Diseño y productividad',descripcion:'Herramientas de edición de video.',precio:20000},
-{nombre:'CapCut Pro',icono:'capcut',categoria:'Diseño y productividad',descripcion:'Herramientas de edición y creación.',precio:16000},
-{nombre:'Duolingo Super',icono:'duolingo',categoria:'Educación',descripcion:'Plan Super.',precio:21000},
-{nombre:'IPTV — Completa 6 meses',icono:'tv',categoria:'TV e IPTV',descripcion:'Servicio por 6 meses.',precio:36000},
-{nombre:'IPTV — 1 mes/pantalla',icono:'tv',categoria:'TV e IPTV',descripcion:'Acceso por 1 mes y pantalla.',precio:9500},
-{nombre:'IPTV Elite — 1 año',icono:'tv',categoria:'TV e IPTV',descripcion:'Servicio por 1 año.',precio:48000},
-{nombre:'DIRECTV GO Full — opción 1',icono:'directv',categoria:'TV e IPTV',descripcion:'Plan Full.',precio:19000},
-{nombre:'DIRECTV GO Full — opción 2',icono:'directv',categoria:'TV e IPTV',descripcion:'Otra opción Full.',precio:38000},
-{nombre:'Flujo TV — 1 día',icono:'tv',categoria:'TV e IPTV',descripcion:'Acceso por 1 día.',precio:9500},
-{nombre:'XuperTV — TV ilimitado',icono:'tv',categoria:'TV e IPTV',descripcion:'Modalidad ilimitada.',precio:20000},
-{nombre:'XuperTV — Android 7 días',icono:'android',categoria:'TV e IPTV',descripcion:'Acceso por 7 días para Android.',precio:3000},
-{nombre:'WIN Sports+',icono:'tv',categoria:'TV e IPTV',descripcion:'Contenido deportivo.',precio:35000},
-{nombre:'Surfshark VPN',icono:'surfshark',categoria:'Seguridad y VPN',descripcion:'Plan VPN; confirmar duración exacta.',precio:18000},
-{nombre:'Xbox Game Pass',icono:'xbox',categoria:'Videojuegos',descripcion:'Plan; confirmar duración y modalidad.',precio:48000},
-{nombre:'EA SPORTS FC 26 — Digital PS4',icono:'easports',categoria:'Videojuegos',descripcion:'Versión digital para PS4.',precio:93000},
-{nombre:'Grand Theft Auto V — Digital',icono:'rockstargames',categoria:'Videojuegos',descripcion:'Versión digital; confirmar plataforma.',precio:102000},
-{nombre:'Steam — Recargas y tarjetas',icono:'steam',categoria:'Videojuegos',descripcion:'Consulta saldo y denominaciones disponibles.',precio:null},
-{nombre:'PlayStation — Recargas y contenido',icono:'playstation',categoria:'Videojuegos',descripcion:'Consulta producto y disponibilidad.',precio:null},
-{nombre:'Recargas para juegos',icono:'gamepad2',categoria:'Videojuegos',descripcion:'Consulta juego y valor de recarga.',precio:null},
-{nombre:'Pornhub / Hub — 1 mes',icono:'pornhub',categoria:'Entretenimiento',descripcion:'Plan de 1 mes; confirmar condiciones y elegibilidad.',precio:9500}
-];
-
-const iconosFallback={
-netflix:'🎬',disneyplus:'🏰',hbo:'🎞️',primevideo:'📺',
-paramountplus:'⭐',vix:'📺',crunchyroll:'🍥',plex:'🎥',
-jellyfin:'🎞️',tv:'📡',rakuten:'🎭',pornhub:'🔞',
-spotify:'🎵',deezer:'🎧',youtube:'▶️',openai:'🤖',
-googlegemini:'✨',canva:'🎨',capcut:'✂️',wondershare:'🎬',
-microsoftoffice:'📄',googleone:'☁️',duolingo:'🦉',
-surfshark:'🛡️',xbox:'🎮',steam:'🕹️',playstation:'🎮',
-easports:'⚽',rockstargames:'🚗',gamepad2:'🎮',android:'🤖',
-directv:'📡'
-};
-
-/* CATÁLOGO */
-const grid=document.getElementById('productos');
-const search=document.getElementById('buscar');
-const filter=document.getElementById('categoria');
-const empty=document.getElementById('vacio');
-
-[...new Set(productos.map(p=>p.categoria))].sort().forEach(c=>{
-const option=document.createElement('option');
-option.value=c;
-option.textContent=c;
-filter.appendChild(option);
-});
-
-function dibujar(){
-const q=search.value.trim().toLowerCase();
-const cat=filter.value;
-const lista=productos.filter(p=>
-(!cat||p.categoria===cat)&&
-(p.nombre.toLowerCase().includes(q)||
-p.descripcion.toLowerCase().includes(q)||
-p.categoria.toLowerCase().includes(q))
-);
-grid.innerHTML='';
-lista.forEach(p=>{
-const card=document.createElement('article');
-card.className='item';
-const head=document.createElement('div');
-head.className='apphead';
-const icon=document.createElement('div');
-icon.className='appicon';
-const img=document.createElement('img');
-img.alt='';
-img.loading='lazy';
-img.src='https://cdn.simpleicons.org/'+encodeURIComponent(p.icono);
-const fallback=document.createElement('span');
-fallback.className='fallback';
-fallback.textContent=iconosFallback[p.icono]||'✨';
-img.onerror=()=>img.replaceWith(fallback);
-icon.appendChild(img);
-const titlebox=document.createElement('div');
-const tag=document.createElement('span');
-tag.className='tag';
-tag.textContent=p.categoria.toUpperCase();
-const title=document.createElement('h3');
-title.textContent=p.nombre;
-titlebox.append(tag,title);
-head.append(icon,titlebox);
-const desc=document.createElement('p');
-desc.textContent=p.descripcion;
-const price=document.createElement('div');
-price.className='price';
-price.innerHTML=p.precio===null?'Consultar precio':'$'+p.precio.toLocaleString('es-CO')+' <small>COP</small>';
-const actions=document.createElement('div');
-actions.className='actions';
-const pagar=document.createElement('a');
-pagar.className='pay-product';
-pagar.href=WOMPI;
-pagar.target='_blank';
-pagar.rel='noopener noreferrer';
-pagar.textContent='💳 PAGAR CON WOMPI';
-const comprar=document.createElement('a');
-comprar.className='buy';
-const mensaje='Hola KrmaVerso Store. Quiero comprar o consultar este producto: '+p.nombre+(p.precio===null?' — Consultar precio':' — $'+p.precio.toLocaleString('es-CO')+' COP')+'. Por favor confirmen disponibilidad, descuentos aplicables y forma de entrega.';
-comprar.href=WHATSAPP+encodeURIComponent(mensaje);
-comprar.target='_blank';
-comprar.rel='noopener noreferrer';
-comprar.textContent='🟢 COMPRAR POR WHATSAPP';
-actions.append(pagar,comprar);
-card.append(head,desc,price,actions);
-grid.appendChild(card);
-});
-empty.style.display=lista.length?'none':'block';
-}
-search.addEventListener('input',dibujar);
-filter.addEventListener('change',dibujar);
-dibujar();
-
-/* CUENTAS SUPABASE */
-const $=id=>document.getElementById(id);
-function message(txt){$('accountMessage').textContent=txt;$('accountError').textContent='';}
-function errorMessage(txt){$('accountError').textContent=txt;$('accountMessage').textContent='';}
-
-function referralFromUrl(){
-return new URLSearchParams(location.search).get('ref')||'';
+function message(txt) {
+  $('accountMessage').textContent = txt;
+  $('accountError').textContent = '';
 }
 
-function setupSupabase(){
-if(!SUPABASE_URL.startsWith('https:krmaverso-store')||SUPABASE_ANON_KEY.includes('rnd_j016iTWpwK2L8Ak51iW7hYi82fSQ')){
-errorMessage('Falta configurar Supabase. Reemplaza SUPABASE_URL y SUPABASE_ANON_KEY en el código.');
-return;
-}
-if(!window.supabase){
-errorMessage('No se pudo cargar Supabase. Revisa tu conexión a internet.');
-return;
-}
-db=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-db.auth.onAuthStateChange((event,session)=>{
-currentUser=session?.user||null;
-if(currentUser){
-setTimeout(()=>loadProfile(),0);
-}else{
-showLoggedOut();
-}
-});
-db.auth.getSession().then(({data,error})=>{
-if(error)errorMessage(error.message);
-currentUser=data.session?.user||null;
-if(currentUser)loadProfile();
-else showLoggedOut();
-});
+function errorMessage(txt) {
+  $('accountError').textContent = txt;
+  $('accountMessage').textContent = '';
 }
 
-function showLoggedOut(){
-$('authPanel').classList.remove('hidden');
-$('profilePanel').classList.add('hidden');
-$('adminPanel').classList.add('hidden');
+function money(value) {
+  return '$' + Number(value).toLocaleString('es-CO') + ' COP';
 }
 
-async function loadProfile(){
-if(!db||!currentUser)return;
-$('authPanel').classList.add('hidden');
-$('profilePanel').classList.remove('hidden');
-const {data:profile,error}=await db.from('profiles').select('*').eq('id',currentUser.id).single();
-if(error){
-errorMessage('No se pudo cargar tu perfil: '+error.message);
-return;
-}
-currentProfile=profile;
-$('profileName').textContent=profile.full_name||'Cliente KRMA';
-$('profileEmail').textContent=currentUser.email||'';
-$('profilePoints').textContent=profile.points||0;
-$('referralCode').textContent=profile.referral_code||'Pendiente';
-await loadCoupons();
-await loadReferrals();
-if(profile.role==='admin'){
-$('adminPanel').classList.remove('hidden');
-await loadCustomers();
-}else{
-$('adminPanel').classList.add('hidden');
-}
+function referralFromUrl() {
+  return new URLSearchParams(location.search).get('ref') || '';
 }
 
-async function loadCoupons(){
-const box=$('myCoupons');
-const {data,error}=await db.from('coupons').select('*').eq('user_id',currentUser.id).eq('active',true).order('created_at',{ascending:false});
-if(error){box.textContent='No se pudieron cargar los cupones.';return;}
-if(!data?.length){box.textContent='Todavía no tienes cupones asignados. ¡Invita amigos y consulta nuestras promociones!';return;}
-box.innerHTML='';
-data.forEach(c=>{
-const div=document.createElement('div');
-div.className='coupon';
-const title=document.createElement('strong');
-title.textContent=c.code;
-const detail=document.createElement('p');
-detail.textContent='Descuento: '+c.discount_percent+'%'+(c.expires_at?' · Vence: '+c.expires_at:'');
-div.append(title,detail);
-const btn=document.createElement('button');
-btn.textContent='COPIAR CÓDIGO';
-btn.onclick=()=>navigator.clipboard.writeText(c.code).then(()=>message('Cupón copiado.'));
-div.appendChild(btn);
-box.appendChild(div);
-});
+async function api(path, options = {}) {
+  const headers = {
+    'Content-Type': 'application/json',
+    ...(options.headers || {})
+  };
+
+  if (token) headers.Authorization = 'Bearer ' + token;
+
+  const response = await fetch(API_BASE + path, {
+    ...options,
+    headers
+  });
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(data.detail || 'Error de conexión con el servidor.');
+  }
+
+  return data;
 }
 
-async function loadReferrals(){
-const {count,error}=await db.from('referrals').select('*',{count:'exact',head:true}).eq('referrer_user_id',currentUser.id);
-$('referralCount').textContent=error?'No se pudieron consultar tus referidos.':'Personas registradas con tu código: '+(count||0);
+/* =====================================================
+   CATEGORÍAS E ICONOS
+===================================================== */
+
+function categoryOf(p) {
+  const id = p.id.toLowerCase();
+
+  if (/spotify|youtube|deezer/.test(id)) return 'Música';
+  if (/chatgpt|gemini/.test(id)) return 'Inteligencia artificial';
+  if (/canva|office|google-one|filmora|capcut/.test(id)) return 'Diseño y productividad';
+  if (/duolingo/.test(id)) return 'Educación';
+  if (/iptv|directv|flujo|xuper|win-sports/.test(id)) return 'TV e IPTV';
+  if (/xbox|steam|playstation|fc-|gta|recargas-juegos/.test(id)) return 'Videojuegos';
+  if (/surfshark/.test(id)) return 'Seguridad y VPN';
+  if (/celulares|accesorios/.test(id)) return 'Tecnología';
+  if (/combo/.test(id)) return 'Combos';
+
+  return 'Entretenimiento';
 }
 
-$('registerBtn').addEventListener('click',async()=>{
-if(!db)return errorMessage('Configura primero Supabase.');
-const name=$('regName').value.trim();
-const email=$('regEmail').value.trim();
-const password=$('regPassword').value;
-if(!name||!email||password.length<8)return errorMessage('Completa nombre, correo y contraseña de mínimo 8 caracteres.');
-const {data,error}=await db.auth.signUp({
-email,password,
-options:{data:{full_name:name,referred_by_code:referralFromUrl()||null}}
-});
-if(error)return errorMessage(error.message);
-if(data.session){
-message('¡Cuenta creada! Ya puedes ingresar a KRMA VERSO.');
-}else{
-message('Registro enviado. Revisa tu correo y confirma la cuenta antes de iniciar sesión.');
-}
-});
+function iconOf(p) {
+  const id = p.id.toLowerCase();
 
-$('loginBtn').addEventListener('click',async()=>{
-if(!db)return errorMessage('Configura primero Supabase.');
-const email=$('loginEmail').value.trim();
-const password=$('loginPassword').value;
-const {error}=await db.auth.signInWithPassword({email,password});
-if(error)return errorMessage(error.message);
-message('¡Bienvenido a KRMA VERSO!');
-});
+  const icons = [
+    ['netflix','🎬'],['amazon','📺'],['prime','📺'],
+    ['max-','🎞️'],['hbo','🎞️'],['disney','🏰'],
+    ['paramount','⭐'],['vix','📺'],['crunchyroll','🍥'],
+    ['plex','🎥'],['jellyfin','🎞️'],['tele-latino','📡'],
+    ['viki','🎭'],['youtube','▶️'],['spotify','🎵'],
+    ['deezer','🎧'],['gemini','✨'],['chatgpt','🤖'],
+    ['canva','🎨'],['office','📄'],['google-one','☁️'],
+    ['filmora','🎬'],['capcut','✂️'],['duolingo','🦉'],
+    ['iptv','📡'],['directv','📡'],['flujo','📺'],
+    ['xuper','📺'],['win-sports','⚽'],['surfshark','🛡️'],
+    ['xbox','🎮'],['steam','🕹️'],['playstation','🎮'],
+    ['fc-','⚽'],['gta','🚗'],['recargas','🎮'],
+    ['celulares','📱'],['accesorios','🎧'],['hub-','🔞']
+  ];
 
-$('resetBtn').addEventListener('click',async()=>{
-if(!db)return errorMessage('Configura primero Supabase.');
-const email=$('loginEmail').value.trim();
-if(!email)return errorMessage('Escribe tu correo en el campo de inicio de sesión.');
-const {error}=await db.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});
-if(error)return errorMessage(error.message);
-message('Te enviamos un enlace de recuperación. Revisa tu correo.');
-});
-
-$('logoutBtn').addEventListener('click',async()=>{
-if(!db)return;
-const {error}=await db.auth.signOut();
-if(error)return errorMessage(error.message);
-currentUser=null;
-currentProfile=null;
-showLoggedOut();
-message('Sesión cerrada correctamente.');
-});
-
-$('refreshProfileBtn').addEventListener('click',loadProfile);
-
-$('copyReferralBtn').addEventListener('click',async()=>{
-if(!currentProfile?.referral_code)return;
-const link=location.origin+location.pathname+'?ref='+encodeURIComponent(currentProfile.referral_code);
-try{
-await navigator.clipboard.writeText(link);
-message('¡Enlace de referido copiado! Compártelo con tus amigos.');
-}catch(e){
-message('Tu enlace de referido: '+link);
-}
-});
-
-/* FUNCIONES DE ADMINISTRACIÓN */
-async function loadCustomers(){
-const box=$('adminCustomers');
-const {data,error}=await db.from('profiles').select('id,full_name,referral_code,points,created_at').order('created_at',{ascending:false}).limit(100);
-if(error){box.textContent='Error cargando clientes: '+error.message;return;}
-box.innerHTML='';
-(data||[]).forEach(p=>{
-const div=document.createElement('div');
-div.className='coupon';
-const name=document.createElement('strong');
-name.textContent=p.full_name||'Cliente';
-const info=document.createElement('p');
-info.textContent='ID: '+p.id+' | Código: '+p.referral_code+' | Puntos: '+p.points;
-const use=document.createElement('button');
-use.className='secondary';
-use.textContent='USAR ESTE CLIENTE';
-use.onclick=()=>{
-$('adminUserId').value=p.id;
-$('couponUserId').value=p.id;
-};
-div.append(name,info,use);
-box.appendChild(div);
-});
-if(!data?.length)box.textContent='No hay clientes registrados todavía.';
+  const found = icons.find(([key]) => id.includes(key));
+  return found ? found[1] : '✨';
 }
 
-$('givePointsBtn').addEventListener('click',async()=>{
-if(!db||currentProfile?.role!=='admin')return errorMessage('No tienes permisos de administrador.');
-const userId=$('adminUserId').value.trim();
-const points=Number($('adminPoints').value);
-if(!userId||!Number.isInteger(points)||points<1)return errorMessage('Escribe un ID de cliente y una cantidad válida de puntos.');
-const {error}=await db.rpc('admin_add_points',{p_user_id:userId,p_points:points});
-if(error)return errorMessage('No se pudieron asignar los puntos: '+error.message);
-message('Puntos asignados correctamente.');
-$('adminPoints').value='';
-await loadCustomers();
+function descriptionOf(p) {
+  const cat = categoryOf(p);
+  return p.precio === null
+    ? 'Consulta disponibilidad y precio por WhatsApp.'
+    : 'Producto de ' + cat.toLowerCase() + '. Confirma modalidad, duración y disponibilidad.';
+}
+
+/* =====================================================
+   CARGAR CATÁLOGO DESDE EL BACKEND
+===================================================== */
+
+async function loadCatalog() {
+  const grid = $('productos');
+  grid.innerHTML = '<p class="intro">Cargando catálogo...</p>';
+
+  try {
+    const data = await api('/api/catalog');
+
+    if (!Array.isArray(data)) {
+      throw new Error('El catálogo recibido no tiene el formato esperado.');
+    }
+
+    productos = data;
+
+    const categories = [...new Set(productos.map(categoryOf))].sort();
+    $('categoria').innerHTML = '<option value="">Todas las categorías</option>';
+
+    categories.forEach(category => {
+      const option = document.createElement('option');
+      option.value = category;
+      option.textContent = category;
+      $('categoria').appendChild(option);
+    });
+
+    dibujar();
+  } catch (error) {
+    grid.innerHTML = '';
+    $('vacio').style.display = 'block';
+    $('vacio').textContent = 'No se pudo cargar el catálogo: ' + error.message;
+  }
+}
+
+function dibujar() {
+  const q = $('buscar').value.trim().toLowerCase();
+  const cat = $('categoria').value;
+
+  const lista = productos.filter(p => {
+    const category = categoryOf(p);
+    return (!cat || category === cat) &&
+      (p.nombre.toLowerCase().includes(q) ||
+       category.toLowerCase().includes(q) ||
+       p.id.toLowerCase().includes(q));
+  });
+
+  const grid = $('productos');
+  grid.innerHTML = '';
+
+  lista.forEach(p => {
+    const card = document.createElement('article');
+    card.className = 'item';
+
+    const head = document.createElement('div');
+    head.className = 'apphead';
+
+    const icon = document.createElement('div');
+    icon.className = 'appicon';
+    icon.textContent = iconOf(p);
+
+    const titlebox = document.createElement('div');
+
+    const tag = document.createElement('span');
+    tag.className = 'tag';
+    tag.textContent = categoryOf(p).toUpperCase();
+
+    const title = document.createElement('h3');
+    title.textContent = p.nombre;
+
+    titlebox.append(tag, title);
+    head.append(icon, titlebox);
+
+    const desc = document.createElement('p');
+    desc.textContent = descriptionOf(p);
+
+    const price = document.createElement('div');
+    price.className = 'price';
+    price.textContent = p.precio === null ? 'Consultar precio' : money(p.precio);
+
+    const actions = document.createElement('div');
+    actions.className = 'actions';
+
+    const buy = document.createElement('button');
+    buy.className = 'buy';
+    buy.textContent = '🟢 COMPRAR POR WHATSAPP';
+    buy.onclick = () => buyProduct(p);
+
+    const pay = document.createElement('a');
+    pay.className = 'pay-product';
+    pay.href = WOMPI;
+    pay.target = '_blank';
+    pay.rel = 'noopener noreferrer';
+    pay.textContent = '💳 PAGAR CON WOMPI';
+
+    actions.append(buy, pay);
+    card.append(head, desc, price, actions);
+    grid.appendChild(card);
+  });
+
+  $('vacio').style.display = lista.length ? 'none' : 'block';
+}
+
+$('buscar').addEventListener('input', dibujar);
+$('categoria').addEventListener('change', dibujar);
+
+/* =====================================================
+   REGISTRO Y AUTENTICACIÓN
+===================================================== */
+
+function showLoggedOut() {
+  $('authPanel').classList.remove('hidden');
+  $('profilePanel').classList.add('hidden');
+  $('adminPanel').classList.add('hidden');
+}
+
+function showLoggedIn() {
+  $('authPanel').classList.add('hidden');
+  $('profilePanel').classList.remove('hidden');
+}
+
+async function register() {
+  const name = $('regName').value.trim();
+  const email = $('regEmail').value.trim();
+  const password = $('regPassword').value;
+  const accepted = $('acceptPolicy').checked;
+
+  if (!name || !email || password.length < 10) {
+    return errorMessage('Completa nombre, correo y contraseña de mínimo 10 caracteres.');
+  }
+
+  if (!accepted) {
+    return errorMessage('Debes aceptar el tratamiento de datos personales.');
+  }
+
+  try {
+    const result = await api('/api/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({
+        name,
+        email,
+        password,
+        referral_code: referralFromUrl() || null,
+        accept_data_policy: true
+      })
+    });
+
+    saveSession(result);
+    message('¡Cuenta creada correctamente! Bienvenido a KrmaVerso.');
+    await loadProfile();
+  } catch (error) {
+    errorMessage(error.message);
+  }
+}
+
+async function login() {
+  const email = $('loginEmail').value.trim();
+  const password = $('loginPassword').value;
+
+  if (!email || !password) {
+    return errorMessage('Escribe tu correo y contraseña.');
+  }
+
+  try {
+    const result = await api('/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ email, password })
+    });
+
+    saveSession(result);
+    message('¡Bienvenido de nuevo a KrmaVerso!');
+    await loadProfile();
+  } catch (error) {
+    errorMessage(error.message);
+  }
+}
+
+function saveSession(result) {
+  token = result.access_token;
+  localStorage.setItem('krma_token', token);
+  currentUser = result.user;
+}
+
+async function logout() {
+  token = '';
+  currentUser = null;
+  localStorage.removeItem('krma_token');
+  showLoggedOut();
+  message('Sesión cerrada correctamente.');
+}
+
+async function loadProfile() {
+  if (!token) return showLoggedOut();
+
+  try {
+    const profile = await api('/api/me');
+    currentUser = profile;
+
+    showLoggedIn();
+
+    $('profileName').textContent = profile.name || 'Cliente KRMA';
+    $('profileEmail').textContent = profile.email || '';
+    $('referralCode').textContent = profile.referral_code || 'Pendiente';
+
+    $('firstPurchase').textContent = profile.first_purchase_available
+      ? '¡Tienes 10% de descuento!'
+      : 'Beneficio de primera compra utilizado';
+
+    renderCoupons(profile.coupons || []);
+    renderOrders(profile.orders || []);
+
+    if (profile.referral_link) {
+      $('copyReferralBtn').dataset.link = profile.referral_link;
+    }
+
+  } catch (error) {
+    token = '';
+    localStorage.removeItem('krma_token');
+    showLoggedOut();
+    errorMessage('Tu sesión no está activa. Inicia sesión nuevamente.');
+  }
+}
+
+function renderCoupons(coupons) {
+  const box = $('myCoupons');
+  box.innerHTML = '';
+
+  if (!coupons.length) {
+    box.textContent = 'Todavía no tienes cupones disponibles.';
+    return;
+  }
+
+  coupons.forEach(coupon => {
+    const div = document.createElement('div');
+    div.className = 'coupon';
+
+    const title = document.createElement('strong');
+    title.textContent = coupon.code;
+
+    const detail = document.createElement('p');
+    detail.textContent = 'Descuento: ' + money(coupon.amount_off) +
+      ' · Vence: ' + new Date(coupon.expires_at).toLocaleDateString('es-CO');
+
+    const copy = document.createElement('button');
+    copy.textContent = 'COPIAR CÓDIGO';
+    copy.onclick = async () => {
+      try {
+        await navigator.clipboard.writeText(coupon.code);
+        message('Cupón copiado correctamente.');
+      } catch {
+        message('Tu cupón es: ' + coupon.code);
+      }
+    };
+
+    div.append(title, detail, copy);
+    box.appendChild(div);
+  });
+}
+
+function renderOrders(orders) {
+  const box = $('myOrders');
+  box.innerHTML = '';
+
+  if (!orders.length) {
+    box.textContent = 'Todavía no tienes pedidos.';
+    return;
+  }
+
+  orders.forEach(order => {
+    const div = document.createElement('div');
+    div.className = 'order';
+
+    const name = document.createElement('strong');
+    name.textContent = order.product_name;
+
+    const detail = document.createElement('p');
+    detail.textContent =
+      'Subtotal: ' + money(order.subtotal) +
+      ' · Descuento: ' + money(order.discount) +
+      ' · Total: ' + money(order.total);
+
+    const status = document.createElement('p');
+    status.textContent = 'Estado: ' + order.status.toUpperCase();
+
+    div.append(name, detail, status);
+    box.appendChild(div);
+  });
+}
+
+/* =====================================================
+   COMPRA Y CREACIÓN DE PEDIDOS
+===================================================== */
+
+async function buyProduct(product) {
+  if (product.precio === null) {
+    const msg = 'Hola KrmaVerso Store. Quiero consultar disponibilidad y precio de: ' + product.nombre;
+    window.open(WHATSAPP + encodeURIComponent(msg), '_blank');
+    return;
+  }
+
+  if (!token) {
+    message('Para crear un pedido debes iniciar sesión o registrarte.');
+    location.hash = 'cuenta';
+    return;
+  }
+
+  try {
+    const result = await api('/api/orders', {
+      method: 'POST',
+      body: JSON.stringify({ product_id: product.id })
+    });
+
+    const msg =
+      'Hola KrmaVerso Store. Acabo de generar un pedido.\n' +
+      'Producto: ' + result.product_name + '\n' +
+      'Subtotal: ' + money(result.subtotal) + '\n' +
+      'Descuento: ' + money(result.discount) + '\n' +
+      'Total: ' + money(result.total) + '\n' +
+      'Número de pedido: ' + result.order_id + '\n' +
+      'Quiero confirmar disponibilidad y recibir instrucciones de pago.';
+
+    await loadProfile();
+
+    window.open(WHATSAPP + encodeURIComponent(msg), '_blank');
+    message('Pedido creado. Confirma el valor y las instrucciones por WhatsApp.');
+
+  } catch (error) {
+    errorMessage(error.message);
+  }
+}
+
+/* =====================================================
+   REFERIDOS
+===================================================== */
+
+$('copyReferralBtn').addEventListener('click', async () => {
+  const link = $('copyReferralBtn').dataset.link;
+
+  if (!link) return errorMessage('No se encontró tu enlace de referido.');
+
+  try {
+    await navigator.clipboard.writeText(link);
+    message('¡Enlace de referido copiado! Compártelo con tus amigos.');
+  } catch {
+    message('Tu enlace de referido: ' + link);
+  }
 });
 
-$('createCouponBtn').addEventListener('click',async()=>{
-if(!db||currentProfile?.role!=='admin')return errorMessage('No tienes permisos de administrador.');
-const userId=$('couponUserId').value.trim();
-const code=$('couponCode').value.trim().toUpperCase().replace(/[^A-Z0-9_-]/g,'');
-const discount=Number($('couponDiscount').value);
-const expiry=$('couponExpiry').value||null;
-if(!userId||!code||!Number.isInteger(discount)||discount<1||discount>100)return errorMessage('Completa el ID, código y descuento entre 1 y 100.');
-const {error}=await db.from('coupons').insert({
-user_id:userId,code,discount_percent:discount,expires_at:expiry,active:true
-});
-if(error)return errorMessage('No se pudo crear el cupón: '+error.message);
-message('Cupón creado correctamente.');
-$('couponCode').value='';
-$('couponDiscount').value='';
-});
+/* =====================================================
+   ADMINISTRACIÓN DE PEDIDOS
+===================================================== */
 
-setupSupabase();
+async function loadAdminOrders() {
+  const secret = $('adminSecret').value.trim();
+
+  if (!secret) {
+    return errorMessage('Introduce tu clave administrativa.');
+  }
+
+  adminSecret = secret;
+  $('adminOrders').textContent = 'Cargando pedidos...';
+
+  try {
+    const response = await fetch(API_BASE + '/api/admin/orders', {
+      headers: { 'X-Admin-Secret': adminSecret }
+    });
+
+    const orders = await response.json();
+
+    if (!response.ok) {
+      throw new Error(orders.detail || 'No fue posible consultar los pedidos.');
+    }
+
+    const box = $('adminOrders');
+    box.innerHTML = '';
+
+    if (!orders.length) {
+      box.textContent = 'No hay pedidos pendientes.';
+      return;
+    }
+
+    orders.forEach(order => {
+      const div = document.createElement('div');
+      div.className = 'order';
+
+      const title = document.createElement('strong');
+      title.textContent = order.product_name;
+
+      const detail = document.createElement('p');
+      detail.textContent =
+        'Cliente ID: ' + order.user_id +
+        ' · Total: ' + money(order.total) +
+        ' · Pedido: ' + order.id;
+
+      const paid = document.createElement('button');
+      paid.textContent = 'CONFIRMAR PAGO RECIBIDO';
+
+      paid.onclick = async () => {
+        if (!confirm('¿Confirmas que recibiste el pago de este pedido?')) return;
+
+        try {
+          const result = await fetch(
+            API_BASE + '/api/admin/orders/' + encodeURIComponent(order.id) + '/paid',
+            {
+              method: 'POST',
+              headers: { 'X-Admin-Secret': adminSecret }
+            }
+          );
+
+          const data = await result.json();
+
+          if (!result.ok) {
+            throw new Error(data.detail || 'No se pudo confirmar el pago.');
+          }
+
+          message('Pago confirmado correctamente.');
+          await loadAdminOrders();
+
+        } catch (error) {
+          errorMessage(error.message);
+        }
+      };
+
+      div.append(title, detail, paid);
+      box.appendChild(div);
+    });
+
+  } catch (error) {
+    $('adminOrders').textContent = '';
+    errorMessage(error.message);
+  }
+}
+
+/* =====================================================
+   EVENTOS
+===================================================== */
+
+$('registerBtn').addEventListener('click', register);
+$('loginBtn').addEventListener('click', login);
+$('logoutBtn').addEventListener('click', logout);
+$('refreshProfileBtn').addEventListener('click', loadProfile);
+$('loadAdminBtn').addEventListener('click', loadAdminOrders);
+
+/* =====================================================
+   INICIO DE LA TIENDA
+===================================================== */
+
+async function init() {
+  await loadCatalog();
+
+  if (token) {
+    await loadProfile();
+  } else {
+    showLoggedOut();
+  }
+}
+
+init();
 </script>
+
 </body>
 </html>
