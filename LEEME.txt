@@ -1,54 +1,32 @@
-KRMAVERSO STORE - ESTRUCTURA MULTIPÁGINA
+KRMAVERSO STORE - ARCHIVOS HTML CORREGIDOS
 
-ARCHIVOS
-- index.html: inicio
-- suscripciones.html: catálogo de suscripciones
-- cuentas.html: catálogo de cuentas completas
-- perfiles.html: catálogo de perfiles individuales
-- aplicaciones.html: aplicaciones y herramientas
-- juegos.html: videojuegos y recargas
-- cuenta.html: registro, inicio de sesión, perfil, cupones, referidos y pedidos
-- pagos.html: Wompi y QR
-- assets/config.js: API, Wompi, WhatsApp y reglas de clasificación
-- assets/styles.css: diseño compartido
-- assets/app.js: catálogo, autenticación y pedidos
+ESTE PAQUETE CONTIENE 8 PAGINAS HTML:
+- index.html
+- suscripciones.html
+- cuentas.html
+- perfiles.html
+- aplicaciones.html
+- juegos.html
+- cuenta.html
+- pagos.html
 
-PUBLICACIÓN
-1. Haz una copia de seguridad del sitio actual.
-2. Sube todos estos archivos y la carpeta assets a la raíz de tu repositorio GitHub Pages.
-3. Mantén los nombres de archivo y la carpeta assets tal como están.
-4. No cambies tu backend de Render ni la base PostgreSQL para esta actualización de frontend.
-5. Abre index.html desde tu dominio GitHub Pages y prueba registro, inicio de sesión, catálogo y creación de pedidos.
+CORRECCION REALIZADA:
+Las paginas ahora cargan los archivos compartidos desde la raiz del repositorio:
+- styles.css
+- config.js
+- app.js
 
-IMPORTANTE SOBRE LA CLASIFICACIÓN
-El backend actual devuelve /api/catalog. El frontend clasifica los productos usando los campos tipo/category/categoria/type y, como respaldo, palabras del nombre e ID.
-Edita PRODUCT_RULES en assets/config.js para ajustar productos concretos:
-- completeAccounts: cuentas completas
-- profiles: perfiles
-- subscriptions: suscripciones
-- applications: aplicaciones
-- games: videojuegos
+IMPORTANTE:
+En el repositorio KRMAVERSO-STORE/KrmaFree-Store esos tres archivos ya existen en la raiz.
+Por eso este paquete NO los reemplaza ni incluye una carpeta assets.
+Tampoco modifica tienda.html, main.py, Render ni PostgreSQL.
 
-RECOMENDACIÓN
-Para una clasificación infalible a largo plazo, cada producto debería tener en el backend un campo category o tipo con uno de estos valores:
-completeAccounts, profiles, subscriptions, applications, games.
-Las reglas por palabras son un respaldo, no sustituyen una categoría explícita en la base de datos.
+COMO INSTALAR:
+1. Descarga y descomprime este ZIP.
+2. Abre tu repositorio GitHub: KRMAVERSO-STORE/KrmaFree-Store.
+3. En la raiz del repositorio, reemplaza los ocho archivos HTML por los de esta carpeta.
+4. No borres ni reemplaces styles.css, config.js ni app.js que ya estan en la raiz.
+5. Guarda los cambios con Commit changes.
+6. Espera a que GitHub Pages publique y abre la URL configurada en Settings > Pages.
 
-AUTENTICACIÓN Y PEDIDOS
-Se conservan las rutas que ya usaba el frontend:
-GET /api/catalog
-POST /api/auth/register
-POST /api/auth/login
-GET /api/me
-POST /api/orders
-POST /api/orders/{id}/cancel
-GET /api/admin/orders
-POST /api/admin/orders/{id}/paid
-
-La sesión se guarda en localStorage con la clave krma_token, para que siga activa al cambiar entre páginas del mismo dominio.
-
-SEGURIDAD
-- No publiques ADMIN_SECRET en archivos HTML o JavaScript.
-- El panel administrativo solicita la clave al administrador y la envía en el encabezado X-Admin-Secret, igual que tu sistema actual.
-- La confirmación de pago es manual: verifica el ingreso real en Wompi antes de marcar un pedido como pagado.
-- Usa HTTPS y conserva la política de privacidad y tratamiento de datos personales.
+No subas la carpeta completa como una subcarpeta. Los ocho HTML deben quedar directamente en la raiz, al mismo nivel que styles.css, config.js y app.js.
