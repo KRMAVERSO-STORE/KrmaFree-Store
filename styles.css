@@ -1,0 +1,39 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
+:root{--bg:#060716;--panel:#11152d;--panel2:#171a39;--cyan:#00eaff;--purple:#9b5cff;--muted:#b9bfd8;--line:#37336d;--green:#20d879;--red:#ff8297}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 50% -10%,#342064,#11102d 35%,#060716 75%);color:#f7f7ff;font-family:Inter,Arial,sans-serif;min-height:100vh}
+a{color:var(--cyan);text-decoration:none}button,input,select{font:inherit}button{cursor:pointer}
+.site-header{position:sticky;top:0;z-index:20;background:#070817ed;border-bottom:1px solid #373064;backdrop-filter:blur(12px)}
+.nav{max-width:1200px;margin:auto;padding:14px 5%;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{font:800 1rem Orbitron,sans-serif;color:#fff;letter-spacing:.04em}.brand span{color:var(--cyan)}
+.nav-links{display:flex;align-items:center;gap:15px;flex-wrap:wrap}.nav-links a{font-size:.83rem;font-weight:800;color:#d8d8f4}.nav-links a:hover,.nav-links a.active{color:var(--cyan)}
+.nav-cta{padding:9px 13px;border-radius:9px;background:linear-gradient(90deg,var(--cyan),#b28aff);color:#080817!important}
+.wrap{max-width:1200px;margin:auto;padding:30px 5% 70px}
+h1,h2,h3{font-family:Orbitron,sans-serif}h1{font-size:clamp(1.7rem,5vw,2.7rem);color:var(--cyan);margin:0 0 14px}h2{font-size:clamp(1.1rem,3vw,1.45rem);color:#d3b5ff;margin:30px 0 15px}h3{font-size:1rem}
+p{line-height:1.65}.muted,.intro{color:var(--muted)}.intro{line-height:1.75}
+.hero,.panel{border:1px solid #4a3d8c;border-radius:20px;padding:24px;background:linear-gradient(130deg,#101a36,#211344,#10162f);box-shadow:0 0 30px #7c4dff24}
+.hero{margin-bottom:24px}.hero .eyebrow{color:var(--cyan);font-size:.75rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.btn,.buy,.pay-product{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:10px;padding:12px 16px;font-weight:800;text-align:center}
+.btn-primary,.pay-product{background:linear-gradient(90deg,var(--cyan),#b28aff);color:#080817}.btn-green,.buy{background:linear-gradient(90deg,#20d879,#00a86b);color:#04180e}.btn-secondary{background:#29234b;color:white;border:1px solid #6853a0}.btn-danger{background:#852b53;color:white}
+.category-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:15px;margin:18px 0}
+.category-card{padding:20px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(145deg,#171a39,#0d1022);min-height:150px;transition:.2s}
+.category-card:hover{transform:translateY(-3px);border-color:var(--cyan)}.category-card .emoji{font-size:1.8rem}.category-card h3{margin:12px 0 6px}.category-card p{font-size:.85rem;color:var(--muted);margin:0}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.toolbar input,.toolbar select,.field input{background:#11142b;border:1px solid #49417d;color:white;border-radius:10px;padding:12px;min-width:180px}.toolbar input{flex:1}
+.product-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}
+.product-card{background:linear-gradient(145deg,#171a39,#0d1022);border:1px solid var(--line);border-radius:16px;padding:17px;display:flex;flex-direction:column;min-height:245px;transition:.2s}
+.product-card:hover{transform:translateY(-3px);border-color:var(--cyan);box-shadow:0 8px 25px #00eaff16}
+.product-head{display:flex;align-items:center;gap:12px;margin-bottom:12px}.product-icon{width:48px;height:48px;border-radius:13px;background:white;display:grid;place-items:center;flex:none;color:#111;font-size:24px}
+.product-tag{font-size:.68rem;color:var(--cyan);font-weight:800;text-transform:uppercase}.product-card h3{margin:3px 0 0;font-family:Inter,sans-serif}.product-card p{color:var(--muted);font-size:.86rem;line-height:1.5;flex:1}
+.price{font:800 1.08rem Orbitron,sans-serif;color:var(--cyan);margin:8px 0 12px}.price small{font:600 .68rem Inter,sans-serif;color:var(--muted)}
+.product-actions{display:grid;gap:9px;margin-top:10px}.buy,.pay-product{width:100%;padding:11px 8px;font-size:.8rem}
+.empty,.status{padding:15px;border-radius:10px;background:#10152d;color:var(--muted)}.notice{margin-top:28px;border:1px solid #67519d;background:#171333;padding:17px;border-radius:12px;color:#d8d4ef;font-size:.87rem;line-height:1.65}
+.two-col{display:grid;grid-template-columns:1.1fr .9fr;gap:20px;align-items:start}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:15px}.box{background:#0c1028;border:1px solid #49417d;border-radius:13px;padding:17px;margin:12px 0;min-width:0}
+.field{display:block;margin:10px 0}.field label{display:block;font-size:.83rem;color:#d8d4ef;margin-bottom:6px}.field input{width:100%;min-width:0}
+.field input[type=checkbox]{width:auto}.form-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.message{white-space:pre-wrap;color:#a9f5d0;font-size:.9rem;margin-top:12px}.error{white-space:pre-wrap;color:#ff9eae;font-size:.9rem;margin-top:12px}
+.hidden{display:none!important}.account-status{color:#8fffc2}.coupon,.order{padding:12px;margin:9px 0;border:1px solid #49417d;border-radius:10px;background:#111832;overflow-wrap:anywhere}.coupon{border-style:dashed;border-color:var(--cyan);background:#071b2b}
+.payment-card{display:grid;grid-template-columns:1.1fr .9fr;gap:20px;align-items:center}.secure{display:inline-block;border:1px solid #29d69a66;background:#0b3b2b55;color:#7af0bd;border-radius:30px;padding:8px 12px;font-size:.76rem;font-weight:800}
+.qr{background:white;border-radius:18px;padding:14px;text-align:center;max-width:270px;width:100%;margin:auto}.qr img{display:block;width:100%;height:auto}.qr strong{display:block;color:#151525;margin:12px 0 6px}.qr a{color:#32206c;overflow-wrap:anywhere;font-size:.82rem;font-weight:800}
+footer{text-align:center;color:var(--muted);padding:25px;border-top:1px solid #29264d;font-size:.85rem}
+@media(max-width:760px){.two-col,.payment-card{grid-template-columns:1fr}.nav{justify-content:center}.nav-links{justify-content:center}.wrap{padding-top:22px}}

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#070817"><meta name="description" content="KrmaVerso Store: catálogo digital de servicios, cuentas, perfiles, suscripciones, aplicaciones y videojuegos."><title>Mi cuenta | KrmaVerso Store</title><link rel="stylesheet" href="assets/styles.css"><script src="assets/config.js"></script><script defer src="assets/app.js"></script></head>
+<body><header class="site-header"><nav class="nav">
+<a class="brand" href="index.html">🌌 <span>KRMA</span>VERSO STORE</a>
+<div class="nav-links">
+<a href="index.html">Inicio</a><a href="suscripciones.html">Suscripciones</a><a href="cuentas.html">Cuentas</a><a href="perfiles.html">Perfiles</a><a href="aplicaciones.html">Aplicaciones</a><a href="juegos.html">Juegos</a><a class="nav-cta" href="cuenta.html">Mi cuenta</a>
+</div></nav></header><main class="wrap">
+<section class="hero"><div class="eyebrow">Área de clientes</div><h1>👤 Mi cuenta KrmaVerso</h1><p class="intro">Regístrate o inicia sesión para consultar tus descuentos, cupones, pedidos y código de referido.</p></section>
+<section id="acceso" class="panel"><div id="authPanel" class="form-grid">
+<div class="box"><h2>✨ Crear cuenta</h2>
+<div class="field"><label for="regName">Nombre</label><input id="regName" type="text" placeholder="Tu nombre" autocomplete="name"></div>
+<div class="field"><label for="regEmail">Correo electrónico</label><input id="regEmail" type="email" placeholder="correo@ejemplo.com" autocomplete="email"></div>
+<div class="field"><label for="regPassword">Contraseña (mínimo 10 caracteres)</label><input id="regPassword" type="password" placeholder="Crea una contraseña" autocomplete="new-password"></div>
+<label class="muted"><input id="acceptPolicy" type="checkbox"> Acepto el tratamiento de mis datos personales y la política de privacidad.</label>
+<div class="form-actions"><button id="registerBtn" class="btn btn-primary">REGISTRARME</button></div></div>
+<div class="box"><h2>🔐 Iniciar sesión</h2>
+<div class="field"><label for="loginEmail">Correo electrónico</label><input id="loginEmail" type="email" placeholder="Tu correo" autocomplete="email"></div>
+<div class="field"><label for="loginPassword">Contraseña</label><input id="loginPassword" type="password" placeholder="Tu contraseña" autocomplete="current-password"></div>
+<div class="form-actions"><button id="loginBtn" class="btn btn-primary">INICIAR SESIÓN</button></div></div>
+</div>
+<div id="profilePanel" class="hidden">
+<div class="box"><p class="account-status">✅ Sesión iniciada</p><h2>¡Hola, <span id="profileName">cliente</span>!</h2><p class="muted" id="profileEmail"></p>
+<div class="form-grid"><div class="box"><small class="muted">BENEFICIO DE PRIMERA COMPRA</small><h3 id="firstPurchase">Consultando...</h3><p class="muted">El descuento se calcula al crear el pedido.</p></div><div class="box"><small class="muted">TU CÓDIGO DE REFERIDO</small><h3 id="referralCode">Cargando...</h3><button id="copyReferralBtn" class="btn btn-secondary">COPIAR MI ENLACE</button></div></div></div>
+<div class="box"><h2>🎁 Mis cupones</h2><div id="myCoupons">Cargando...</div></div>
+<div class="box"><h2>🧾 Mis pedidos</h2><div id="myOrders">Cargando...</div></div>
+<div class="box"><h2>🤝 Invita a tus amigos</h2><p class="intro">Comparte tu enlace. Cuando un amigo se registre con tu código y confirme su primera compra, tú y tu amigo recibirán un cupón de $3.000, válido durante 90 días.</p></div>
+<div class="form-actions"><button id="refreshProfileBtn" class="btn btn-secondary">ACTUALIZAR MI CUENTA</button><button id="showAdminBtn" class="btn btn-secondary" type="button">ADMINISTRACIÓN</button><button id="logoutBtn" class="btn btn-danger">CERRAR SESIÓN</button></div>
+</div>
+<div id="adminPanel" class="box hidden"><h2>🛠️ Administración</h2><p class="intro">Confirma manualmente los pagos recibidos. Esta sección utiliza la clave administrativa configurada en el servidor.</p><div class="field"><label for="adminSecret">Clave administrativa</label><input id="adminSecret" type="password" placeholder="ADMIN_SECRET" autocomplete="off"></div><div class="form-actions"><button id="loadAdminBtn" class="btn btn-primary">CARGAR PEDIDOS</button><button id="hideAdminBtn" class="btn btn-secondary">OCULTAR</button></div><div id="adminOrders"></div></div>
+<div id="message" class="message hidden" role="status"></div><div id="error" class="error hidden" role="alert"></div>
+</section>
+</main><footer>© 2026 KrmaVerso Store · WhatsApp: <a href="https://wa.me/573215201208" target="_blank" rel="noopener">321 520 1208</a><br>Telegram: @KrmaVerso</footer></body></html>
