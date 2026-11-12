@@ -324,14 +324,24 @@
     if (!grid) return;
 
     const search = normalize($("search")?.value || "");
+    const page = normalize(location.pathname.split("/").pop().replace(/\.html$/, ""));
+    const pageCategory = ({
+      "suscripciones": ["suscripcion", "suscripciones", "subscription"],
+      "cuentas": ["cuenta completa", "cuentas completas", "cuentas"],
+      "perfiles": ["perfil", "perfiles"],
+      "aplicaciones": ["aplicacion", "aplicaciones", "productividad", "educacion", "inteligencia artificial"],
+      "juegos": ["videojuego", "videojuegos", "juegos", "gaming"]
+    })[page] || [];
+
     const filtered = list.filter(product => {
+      const category = normalize(product.category || "");
       const text = normalize(
         productName(product) + " " +
         productDescription(product) + " " +
         (product.category || "")
       );
-
-      return !search || text.includes(search);
+      const matchesCategory = !pageCategory.length || pageCategory.some(value => category.includes(normalize(value)));
+      return matchesCategory && (!search || text.includes(search));
     });
 
     grid.innerHTML = "";
@@ -418,18 +428,15 @@
       const result = await api("/api/orders", {
         method: "POST",
         body: JSON.stringify({
-          customer_name: profile.name,
-          customer_email: profile.email,
-          product_name: productName(product),
-          quantity: 1,
-          total: Number(product.price)
+          product_id: Number(product.id),
+          quantity: 1
         })
       });
 
       const message =
         "Hola KRMA VERSO Store. Acabo de generar un pedido." +
-        "\nProducto: " + productName(product) +
-        "\nTotal: " + money(product.price) +
+        "\nProducto: " + result.product_name +
+        "\nTotal: " + money(result.total) +
         "\nNúmero de pedido: " + result.order_id +
         "\nQuiero confirmar disponibilidad e instrucciones de pago.";
 

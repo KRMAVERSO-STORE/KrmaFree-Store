@@ -18,6 +18,7 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     Text,
+    text,
 )
 from sqlalchemy.orm import declarative_base, sessionmaker, Session
 
@@ -29,6 +30,7 @@ from sqlalchemy.orm import declarative_base, sessionmaker, Session
 DATABASE_URL = os.getenv("DATABASE_URL", "")
 JWT_SECRET = os.getenv("JWT_SECRET", "")
 ADMIN_SECRET = os.getenv("ADMIN_SECRET", "")
+CORS_ORIGINS = [origin.strip() for origin in os.getenv("CORS_ORIGINS", "https://krmaverse.github.io").split(",") if origin.strip()]
 
 if not DATABASE_URL:
     raise RuntimeError("Falta configurar DATABASE_URL en Render.")
@@ -119,11 +121,12 @@ class LoginData(BaseModel):
 
 
 class OrderData(BaseModel):
-    customer_name: str
+    product_id: int | None = None
+    customer_name: str | None = None
     customer_email: EmailStr | None = None
-    product_name: str
+    product_name: str | None = None
     quantity: int = 1
-    total: float
+    total: float | None = None
     payment_reference: str | None = None
 
 
@@ -148,7 +151,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=CORS_ORIGINS,
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -169,13 +172,11 @@ def get_db():
 
 @app.on_event("startup")
 def startup():
-    # Si PostgreSQL no está disponible, el servidor podrá iniciar,
-    # pero los endpoints que usan la base de datos no funcionarán.
-    try:
-        Base.metadata.create_all(bind=engine)
-        print("Base de datos KRMA VERSO conectada.")
-    except Exception as error:
-        print("No se pudo inicializar PostgreSQL:", str(error))
+    # Fallar el despliegue si PostgreSQL no conecta; no anunciar un servicio sano sin BD.
+    with engine.begin() as connection:
+        connection.execute(text("SELECT 1"))
+    Base.metadata.create_all(bind=engine)
+    print("Base de datos KRMA VERSO conectada y tablas verificadas.")
 
 
 # ==================================================
@@ -262,10 +263,12 @@ def home():
 
 @app.get("/health")
 def health():
-    return {
-        "status": "ok",
-        "service": "KRMA VERSO Backend",
-    }
+    try:
+        with engine.connect() as connection:
+            connection.execute(text("SELECT 1"))
+    except Exception:
+        raise HTTPException(status_code=503, detail="PostgreSQL no está disponible")
+    return {"status": "ok", "database": "connected", "service": "KRMA VERSO Backend"}
 
 
 # ==================================================
@@ -285,9 +288,12 @@ def get_catalog(db: Session = Depends(get_db)):
         {
             "id": product.id,
             "name": product.name,
+            "nombre": product.name,
             "description": product.description,
+            "descripcion": product.description,
             "category": product.category,
             "price": product.price,
+            "precio": product.price,
             "image": product.image,
             "active": product.active,
         }
@@ -319,6 +325,7 @@ def create_product(
 # REGISTRO
 # ==================================================
 
+@app.post("/api/auth/register")
 @app.post("/api/register")
 def register(
     data: RegisterData,
@@ -352,9 +359,11 @@ def register(
     db.commit()
     db.refresh(user)
 
+    token = create_token(user.id)
     return {
         "message": "Cuenta creada correctamente",
-        "token": create_token(user.id),
+        "token": token,
+        "access_token": token,
         "user": {
             "id": user.id,
             "name": user.name,
@@ -367,6 +376,7 @@ def register(
 # INICIO DE SESIÓN
 # ==================================================
 
+@app.post("/api/auth/login")
 @app.post("/api/login")
 def login(
     data: LoginData,
@@ -387,9 +397,11 @@ def login(
             detail="Correo o contraseña incorrectos",
         )
 
+    token = create_token(user.id)
     return {
         "message": "Inicio de sesión correcto",
-        "token": create_token(user.id),
+        "token": token,
+        "access_token": token,
         "user": {
             "id": user.id,
             "name": user.name,
@@ -408,6 +420,11 @@ def get_me(user: User = Depends(get_current_user)):
         "id": user.id,
         "name": user.name,
         "email": user.email,
+        "referral_code": None,
+        "referral_link": None,
+        "first_purchase_available": False,
+        "coupons": [],
+        "orders": [],
     }
 
 
@@ -421,19 +438,27 @@ def create_order(
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    if data.quantity < 1 or data.total < 0:
-        raise HTTPException(
-            status_code=400,
-            detail="Cantidad o total inválido",
-        )
+    if data.quantity < 1:
+        raise HTTPException(status_code=400, detail="Cantidad inválida")
+
+    # El precio y el nombre siempre se toman del catálogo del servidor.
+    if data.product_id is not None:
+        product = db.query(Product).filter(Product.id == data.product_id, Product.active == True).first()
+        if not product:
+            raise HTTPException(status_code=404, detail="Producto no encontrado o no disponible")
+        product_name = product.name
+        total = float(product.price) * data.quantity
+    else:
+        # Compatibilidad temporal con clientes antiguos; no confiar en precios enviados por el navegador.
+        raise HTTPException(status_code=400, detail="Debes seleccionar un producto válido del catálogo")
 
     order = Order(
         user_id=user.id,
-        customer_name=data.customer_name,
-        customer_email=data.customer_email,
-        product_name=data.product_name,
+        customer_name=(data.customer_name or user.name).strip(),
+        customer_email=data.customer_email or user.email,
+        product_name=product_name,
         quantity=data.quantity,
-        total=data.total,
+        total=total,
         payment_reference=data.payment_reference,
     )
 
@@ -444,6 +469,10 @@ def create_order(
     return {
         "message": "Pedido creado correctamente",
         "order_id": order.id,
+        "product_name": order.product_name,
+        "subtotal": total,
+        "discount": 0,
+        "total": total,
         "status": order.status,
     }
 
@@ -471,6 +500,22 @@ def get_my_orders(
         }
         for order in orders
     ]
+
+
+@app.post("/api/orders/{order_id}/cancel")
+def cancel_order(
+    order_id: int,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    order = db.query(Order).filter(Order.id == order_id, Order.user_id == user.id).first()
+    if not order:
+        raise HTTPException(status_code=404, detail="Pedido no encontrado")
+    if order.status != "pendiente":
+        raise HTTPException(status_code=400, detail="Solo se pueden cancelar pedidos pendientes")
+    order.status = "cancelado"
+    db.commit()
+    return {"message": "Pedido cancelado", "order_id": order.id, "status": order.status}
 
 
 # ==================================================
@@ -501,6 +546,7 @@ def admin_get_orders(
     ]
 
 
+@app.post("/api/admin/orders/{order_id}/paid")
 @app.patch("/api/admin/orders/{order_id}/paid")
 def mark_order_paid(
     order_id: int,

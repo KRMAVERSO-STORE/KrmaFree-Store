@@ -1,37 +1,56 @@
-# KrmaVerso Store API — paquete inicial
+# KrmaVerso Store — frontend y API
 
-## Qué incluye
-- Registro e inicio de sesión con contraseña cifrada (Argon2).
-- Código único y enlace de referido por cliente.
-- Descuento del 10% en primera compra.
-- Recompensa de $3.000 COP para quien invita y quien llega referido, una vez que el administrador confirma el primer pago del referido.
-- Historial básico de pedidos y endpoint de administración para confirmar pagos.
-- PostgreSQL como base de datos persistente.
+Este paquete contiene las páginas HTML, CSS y JavaScript de la tienda, además de una API FastAPI que usa PostgreSQL.
 
-## Importante antes de producción
-Este paquete es una base funcional para desplegar y probar, no está conectado todavía a tu HTML ni a Wompi. El catálogo.json de ejemplo NO contiene tu catálogo completo y los IDs deben coincidir con los productos del HTML. No lo publiques en producción hasta sincronizar ese archivo y conectar el frontend.
+## Importante: estado real de este paquete
 
-El enlace Wompi actual es fijo. Por ahora el total con descuento se calcula en el servidor, pero el administrador debe verificar el pago manualmente. No se debe marcar un pedido como pagado sin comprobarlo en Wompi. Para automatizar cobros por importe exacto se necesita integrar la API y los webhooks oficiales de Wompi.
+- El frontend principal (`index.html`, `cuenta.html`, categorías) usa `config.js` y `app.js`.
+- `tienda.html` es una página independiente heredada; usa los mismos endpoints de API.
+- La API admite registro, inicio de sesión, perfil, catálogo, creación/cancelación de pedidos y confirmación administrativa de pagos.
+- Los pedidos toman nombre y precio del catálogo del servidor, no del precio enviado por el navegador.
+- El sistema de referidos, descuentos y cupones NO está implementado en este paquete.
+- El checkout de Wompi es un enlace fijo y NO confirma pagos automáticamente. El administrador debe verificar el pago en Wompi antes de marcarlo como pagado.
+- Este ZIP no incluye un catálogo de productos precargado. La tabla `products` estará vacía hasta agregar productos desde `POST /api/admin/products` con el encabezado `X-Admin-Secret`.
 
-## Despliegue manual
-Puedes usar un servicio compatible con Python ASGI y PostgreSQL (por ejemplo Render):
-1. Sube la carpeta `store_api` a un repositorio privado o a tu repositorio actual.
-2. Crea una base de datos PostgreSQL y copia su URL interna/externa según el proveedor.
-3. Crea un servicio web Python apuntando a `store_api`.
-4. Build command: `pip install -r requirements.txt`
-5. Start command: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-6. Define las variables de `.env.example` en el panel del proveedor. Nunca subas los secretos a GitHub.
-7. Agrega el dominio público del frontend a `CORS_ORIGINS`.
-8. Prueba `/health` y `/docs`.
+## Render
 
-## Endpoints
-- `POST /api/auth/register`
-- `POST /api/auth/login`
+**Build command**
+```bash
+pip install -r requirements.txt
+```
+
+**Start command**
+```bash
+uvicorn main:app --host 0.0.0.0 --port $PORT
+```
+
+Configura estas variables privadas en Render:
+
+- `DATABASE_URL`: URL de PostgreSQL.
+- `JWT_SECRET`: secreto aleatorio largo (mínimo 32 caracteres).
+- `ADMIN_SECRET`: otra clave aleatoria larga (mínimo 24 caracteres).
+- `CORS_ORIGINS`: dominios autorizados separados por coma; por ejemplo `https://krmaverse.github.io`.
+
+No subas valores secretos a GitHub ni los compartas en capturas.
+
+## Comprobación
+
+- `/health`: comprueba también la conexión a PostgreSQL. Responde `503` si la base de datos no está disponible.
+- `/docs`: documentación interactiva de la API.
+
+## Rutas principales
+
+- `POST /api/auth/register` y `POST /api/register`
+- `POST /api/auth/login` y `POST /api/login`
 - `GET /api/me`
-- `POST /api/orders`
+- `GET /api/catalog`
+- `POST /api/orders` (requiere `product_id` y sesión)
+- `GET /api/orders`
 - `POST /api/orders/{order_id}/cancel`
-- `GET /api/admin/orders` (header `X-Admin-Secret`)
-- `POST /api/admin/orders/{order_id}/paid` (header `X-Admin-Secret`)
+- `GET /api/admin/orders` (requiere `X-Admin-Secret`)
+- `POST` o `PATCH /api/admin/orders/{order_id}/paid` (requiere `X-Admin-Secret`)
+- `POST /api/admin/products` (requiere `X-Admin-Secret`)
 
-## Variables
-Consulta `.env.example`. Usa secretos únicos y largos. La API requiere HTTPS.
+## Aviso de compatibilidad de base de datos
+
+`create_all` crea tablas que no existan, pero no modifica automáticamente tablas antiguas. Haz una copia de seguridad antes de cualquier cambio de esquema.

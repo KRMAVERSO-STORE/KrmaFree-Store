@@ -132,7 +132,7 @@ Todos los precios están expresados en COP. Antes de realizar el pago, confirma 
 
 <script>
 /* CONFIGURACIÓN: API REAL DE RENDER */
-const API_BASE = 'https://krmafree-store-nqak.onrender.com';
+const API_BASE = 'https://krmafree-verso-store.onrender.com';
 const WOMPI = 'https://checkout.wompi.co/l/VPOS_P4mjTE';
 const WHATSAPP = 'https://wa.me/573215201208?text=';
 let token = localStorage.getItem('krma_token') || '';
@@ -158,6 +158,7 @@ async function api(path,options={}){
 }
 
 function categoryOf(p){
+  if(p.category||p.categoria)return p.category||p.categoria;
   const id=String(p.id||'').toLowerCase();
   if(/spotify|youtube|deezer/.test(id))return 'Música';
   if(/chatgpt|gemini/.test(id))return 'Inteligencia artificial';
