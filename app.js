@@ -197,8 +197,8 @@
       if ($("referralCode")) $("referralCode").textContent = profile.referral_code || "No disponible";
       if ($("copyReferralBtn")) $("copyReferralBtn").dataset.link = profile.referral_link || "";
       if ($("firstPurchase")) $("firstPurchase").textContent = profile.first_purchase_available
-        ? "Tu primera compra está lista. Invita amigos y gana $3.000 por cada referido que compre."
-        : "¡Gracias por tu primera compra! Revisa tus cupones disponibles.";
+        ? "Aún no registras una compra pagada. Comparte tu enlace y gana $3.000 por cada amigo que complete su primera compra."
+        : "Tu primera compra ya fue confirmada. Consulta los cupones que tengas disponibles.";
       if ($("myCoupons")) {
         const coupons = Array.isArray(profile.coupons) ? profile.coupons : [];
         $("myCoupons").innerHTML = "";
@@ -504,6 +504,7 @@
       const message =
         "Hola KRMA VERSO Store. Acabo de generar un pedido." +
         "\nProducto: " + result.product_name +
+        "\nDescuento: " + money(result.discount || 0) +
         "\nTotal: " + money(result.total) +
         "\nNúmero de pedido: " + result.order_id +
         "\nQuiero confirmar disponibilidad e instrucciones de pago.";
