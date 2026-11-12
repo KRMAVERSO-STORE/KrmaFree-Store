@@ -118,7 +118,8 @@
         body: JSON.stringify({
           name,
           email,
-          password
+          password,
+          referral_code: new URLSearchParams(location.search).get("ref") || null
         })
       });
 
@@ -193,16 +194,21 @@
         $("profileEmail").textContent = profile.email || "";
       }
 
-      if ($("referralCode")) {
-        $("referralCode").textContent = "Próximamente";
-      }
-
-      if ($("firstPurchase")) {
-        $("firstPurchase").textContent = "Beneficios próximamente disponibles";
-      }
-
+      if ($("referralCode")) $("referralCode").textContent = profile.referral_code || "No disponible";
+      if ($("copyReferralBtn")) $("copyReferralBtn").dataset.link = profile.referral_link || "";
+      if ($("firstPurchase")) $("firstPurchase").textContent = profile.first_purchase_available
+        ? "Tu primera compra está lista. Invita amigos y gana $3.000 por cada referido que compre."
+        : "¡Gracias por tu primera compra! Revisa tus cupones disponibles.";
       if ($("myCoupons")) {
-        $("myCoupons").textContent = "Todavía no tienes cupones disponibles.";
+        const coupons = Array.isArray(profile.coupons) ? profile.coupons : [];
+        $("myCoupons").innerHTML = "";
+        if (!coupons.length) $("myCoupons").textContent = "Aún no tienes cupones. Cuando un amigo referido complete su primera compra, recibirás tu bono de $3.000.";
+        else coupons.forEach(coupon => {
+          const item = document.createElement("div"); item.className = "coupon";
+          const title = document.createElement("strong"); title.textContent = coupon.code + " · " + money(coupon.amount);
+          const detail = document.createElement("p"); detail.textContent = "Estado: " + coupon.status.toUpperCase() + " · Vence: " + new Date(coupon.expires_at).toLocaleDateString("es-CO");
+          item.append(title, detail); $("myCoupons").appendChild(item);
+        });
       }
 
       await loadOrders();
@@ -490,7 +496,8 @@
         method: "POST",
         body: JSON.stringify({
           product_id: Number(product.id),
-          quantity: 1
+          quantity: 1,
+          coupon_code: (window.prompt("¿Tienes un cupón KRMA? Escribe el código o deja vacío para continuar sin descuento.") || "").trim() || null
         })
       });
 
@@ -623,6 +630,14 @@
     if ($("refreshProfileBtn")) {
       $("refreshProfileBtn").addEventListener("click", loadProfile);
     }
+    if ($("copyReferralBtn")) {
+      $("copyReferralBtn").addEventListener("click", async () => {
+        const link = $("copyReferralBtn").dataset.link || "";
+        if (!link) return showError("No se pudo generar tu enlace de referido.");
+        try { await navigator.clipboard.writeText(link); showMessage("Enlace de referido copiado. ¡Compártelo con tus amigos!"); }
+        catch (_) { window.prompt("Copia tu enlace de referido:", link); }
+      });
+    }
 
     if ($("search")) {
       $("search").addEventListener("input", () => renderProducts(products));
@@ -655,6 +670,11 @@
 
   async function init() {
     bind();
+    const currentPage = location.pathname.split("/").pop() || "index.html";
+    document.querySelectorAll(".nav-links a").forEach(link => {
+      const target = (link.getAttribute("href") || "").split("#")[0].split("/").pop();
+      if (target === currentPage) { link.classList.add("active"); link.setAttribute("aria-current", "page"); }
+    });
 
     if ($("products")) {
       await loadCatalog();
