@@ -1,9 +1,9 @@
 [
   {
-    "name": "Netflix — Perfil (33 días)",
+    "name": "Netflix — Perfil (25 días)",
     "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
     "category": "Perfiles",
-    "price": 14000,
+    "price": 12500,
     "image": "",
     "active": true
   },
@@ -11,7 +11,7 @@
     "name": "Netflix — Plan/perfil (33 días)",
     "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
     "category": "Perfiles",
-    "price": 15200,
+    "price": 14000,
     "image": "",
     "active": true
   },
@@ -227,7 +227,7 @@
     "name": "ChatGPT Plus",
     "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
     "category": "Aplicaciones",
-    "price": 24000,
+    "price": 16000,
     "image": "",
     "active": true
   },
