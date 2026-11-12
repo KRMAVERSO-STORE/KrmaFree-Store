@@ -274,6 +274,10 @@ def startup():
         connection.execute(text("ALTER TABLE orders ADD COLUMN IF NOT EXISTS wholesale_total FLOAT"))
         connection.execute(text("ALTER TABLE orders ADD COLUMN IF NOT EXISTS reseller_profit FLOAT"))
         connection.execute(text("CREATE INDEX IF NOT EXISTS ix_orders_reseller_id ON orders (reseller_id)"))
+        # Precios públicos corregidos según confirmación del propietario.
+        connection.execute(text("UPDATE products SET name = 'Netflix — Perfil (25 días)', price = 12500 WHERE name = 'Netflix — Perfil (33 días)'"))
+        connection.execute(text("UPDATE products SET price = 14000 WHERE name = 'Netflix — Plan/perfil (33 días)'"))
+        connection.execute(text("UPDATE products SET price = 16000 WHERE name = 'ChatGPT Plus'"))
 
     # Recuperar el catálogo histórico una sola vez, solo si la tabla está vacía.
     db = SessionLocal()
