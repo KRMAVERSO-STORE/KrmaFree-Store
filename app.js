@@ -339,7 +339,7 @@
       const category = normalize(product.category || "");
       const name = normalize(productName(product));
       return ["perfil", "perfiles", "cuenta", "cuentas"].some(value => category.includes(value)) ||
-        /(^|\\b)(pantalla|compartida|invitacion)(\\b|$)/.test(name);
+        /(^|\b)(pantalla|compartida|invitacion)(\b|$)/.test(name);
     };
 
     const filtered = list.filter(product => {
