@@ -119,3 +119,7 @@ footer{text-align:center;color:var(--muted);padding:25px;border-top:1px solid #2
  .btn,.buy,.pay-product,.nav-cta,.form-actions button,.app-actions a,.legacy-actions a{transition:none!important}
 }
 
+
+/* Estado activo de la sección actual en la navegación KRMA */
+.nav-links a.active:not(.nav-cta){color:#050817!important;background:linear-gradient(115deg,#00f0ff,#397cff 48%,#b14cff)!important;border:1px solid #c4fbff;border-radius:12px;padding:10px 14px;box-shadow:0 0 12px #00eaffaa,0 0 25px #9b5cff88,0 4px 0 #29205c;text-shadow:none!important}
+.nav-links a.nav-cta.active{outline:2px solid #fff;outline-offset:3px;box-shadow:0 0 15px #00eaff,0 0 30px #9b5cff}
