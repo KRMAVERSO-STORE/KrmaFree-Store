@@ -251,7 +251,7 @@
     "name": "Canva Pro",
     "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
     "category": "Aplicaciones",
-    "price": 13000,
+    "price": 7000,
     "image": "",
     "active": true
   },
@@ -280,10 +280,10 @@
     "active": true
   },
   {
-    "name": "CapCut Pro",
+    "name": "CapCut Pro 1 MES",
     "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
     "category": "Aplicaciones",
-    "price": 16000,
+    "price": 9000,
     "image": "",
     "active": true
   },
@@ -291,7 +291,7 @@
     "name": "Duolingo Super",
     "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
     "category": "Aplicaciones",
-    "price": 15000,
+    "price": 21000,
     "image": "",
     "active": true
   },
@@ -312,15 +312,15 @@
     "active": true
   },
   {
-    "name": "IPTV Elite — 1 año",
+    "name": "IPTV COMPLETA 6 MESES",
     "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
     "category": "Suscripciones",
-    "price": 48000,
+    "ice": 36000,
     "image": "",
     "active": true
   },
   {
-    "name": "DIRECTV GO Full — opción 1",
+    "name": "DIRECTV GO GOLD (SIN WIN)",
     "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
     "category": "Suscripciones",
     "price": 19000,
@@ -328,34 +328,26 @@
     "active": true
   },
   {
-    "name": "DIRECTV GO Full — opción 2",
+    "name": "DIRECTV GO GOLD ( PLAN ORO ) CON WIN+",
     "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
     "category": "Suscripciones",
-    "price": 38000,
+    "price": 34000,
     "image": "",
     "active": true
   },
-  {
-    "name": "Flujo TV — 1 día",
+ {
+    "name": "DIRECTV GO GOLD ( COMPLETA ) ",
     "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
     "category": "Suscripciones",
-    "price": 9500,
+    "price": 39000,
     "image": "",
     "active": true
-  },
+  }, 
   {
-    "name": "XuperTV — TV ilimitado",
+    "name": "Flujo TV — (MAGIS TV 1 MES",
     "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
     "category": "Suscripciones",
-    "price": 20000,
-    "image": "",
-    "active": true
-  },
-  {
-    "name": "XuperTV — Android 7 días",
-    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
-    "category": "Suscripciones",
-    "price": 3000,
+    "price": 10500,
     "image": "",
     "active": true
   },
