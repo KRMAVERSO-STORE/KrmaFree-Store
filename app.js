@@ -333,6 +333,15 @@
       "juegos": ["videojuego", "videojuegos", "juegos", "gaming"]
     })[page] || [];
 
+    // Modalidades de acceso individual del catálogo Stream Crack.
+    // Se muestran en PERFILES sin cambiar precios ni categorías guardadas.
+    const isProfileAccess = product => {
+      const category = normalize(product.category || "");
+      const name = normalize(productName(product));
+      return ["perfil", "perfiles", "cuenta", "cuentas"].some(value => category.includes(value)) ||
+        /(^|\\b)(pantalla|compartida|invitacion)(\\b|$)/.test(name);
+    };
+
     const filtered = list.filter(product => {
       const category = normalize(product.category || "");
       const text = normalize(
@@ -340,7 +349,9 @@
         productDescription(product) + " " +
         (product.category || "")
       );
-      const matchesCategory = !pageCategory.length || pageCategory.some(value => category.includes(normalize(value)));
+      let matchesCategory = !pageCategory.length || pageCategory.some(value => category.includes(normalize(value)));
+      if (page === "perfiles" || page === "cuentas") matchesCategory = isProfileAccess(product);
+      if (page === "suscripciones") matchesCategory = matchesCategory && !isProfileAccess(product);
       return matchesCategory && (!search || text.includes(search));
     });
 
