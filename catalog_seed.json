@@ -1,3 +1,4 @@
+
 [
   {
     "name": "Netflix — Perfil (25 días)",
@@ -24,7 +25,7 @@
     "active": true
   },
   {
-    "name": "Netflix — Perfil privado",
+    "name": "Netflix — Perfil privado (18.000)",
     "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
     "category": "Perfiles",
     "price": 18000,
@@ -32,7 +33,7 @@
     "active": true
   },
   {
-    "name": "Netflix — Perfil privado",
+    "name": "Netflix — Perfil privado (12.500)",
     "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
     "category": "Perfiles",
     "price": 12500,
@@ -52,6 +53,14 @@
     "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
     "category": "Perfiles",
     "price": 5000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Combo Netflix + Spotify",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Perfiles",
+    "price": 21000,
     "image": "",
     "active": true
   },
@@ -200,10 +209,66 @@
     "active": true
   },
   {
-    "name": "Combo Netflix + Spotify",
+    "name": "IPTV — Completa 6 meses",
     "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
-    "category": "Perfiles",
-    "price": 21000,
+    "category": "Suscripciones",
+    "price": 36000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "IPTV — 1 mes/pantalla",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Suscripciones",
+    "price": 9500,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "DIRECTV GO GOLD (SIN WIN)",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Suscripciones",
+    "price": 19000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "DIRECTV GO GOLD (PLAN ORO) CON WIN+",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Suscripciones",
+    "price": 34000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "DIRECTV GO GOLD (COMPLETA)",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Suscripciones",
+    "price": 39000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Flujo TV — MAGIS TV 1 MES",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Suscripciones",
+    "price": 10500,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "WIN Sports+",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Suscripciones",
+    "price": 35000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Pornhub / Hub — 1 mes",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Suscripciones",
+    "price": 9500,
     "image": "",
     "active": true
   },
@@ -296,70 +361,6 @@
     "active": true
   },
   {
-    "name": "IPTV — Completa 6 meses",
-    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
-    "category": "Suscripciones",
-    "price": 36000,
-    "image": "",
-    "active": true
-  },
-  {
-    "name": "IPTV — 1 mes/pantalla",
-    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
-    "category": "Suscripciones",
-    "price": 9500,
-    "image": "",
-    "active": true
-  },
-  {
-    "name": "IPTV COMPLETA 6 MESES",
-    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
-    "category": "Suscripciones",
-    "ice": 36000,
-    "image": "",
-    "active": true
-  },
-  {
-    "name": "DIRECTV GO GOLD (SIN WIN)",
-    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
-    "category": "Suscripciones",
-    "price": 19000,
-    "image": "",
-    "active": true
-  },
-  {
-    "name": "DIRECTV GO GOLD ( PLAN ORO ) CON WIN+",
-    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
-    "category": "Suscripciones",
-    "price": 34000,
-    "image": "",
-    "active": true
-  },
- {
-    "name": "DIRECTV GO GOLD ( COMPLETA ) ",
-    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
-    "category": "Suscripciones",
-    "price": 39000,
-    "image": "",
-    "active": true
-  }, 
-  {
-    "name": "Flujo TV — (MAGIS TV 1 MES",
-    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
-    "category": "Suscripciones",
-    "price": 10500,
-    "image": "",
-    "active": true
-  },
-  {
-    "name": "WIN Sports+",
-    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
-    "category": "Suscripciones",
-    "price": 35000,
-    "image": "",
-    "active": true
-  },
-  {
     "name": "Surfshark VPN",
     "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
     "category": "Aplicaciones",
@@ -428,14 +429,6 @@
     "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
     "category": "Tecnología",
     "price": null,
-    "image": "",
-    "active": true
-  },
-  {
-    "name": "Pornhub / Hub — 1 mes",
-    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
-    "category": "Suscripciones",
-    "price": 9500,
     "image": "",
     "active": true
   }
