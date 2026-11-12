@@ -44,3 +44,27 @@ footer{text-align:center;color:var(--muted);padding:25px;border-top:1px solid #2
 .product-card{position:relative;overflow:hidden}
 .product-card:before{content:"";position:absolute;inset:0 0 auto;height:2px;background:linear-gradient(90deg,transparent,var(--cyan),var(--purple),transparent);opacity:.7}
 @keyframes brandGlow{0%,100%{box-shadow:0 0 10px color-mix(in srgb,var(--brand-color),transparent 62%)}50%{box-shadow:0 0 21px color-mix(in srgb,var(--brand-color),transparent 36%)}}
+
+/* Botones unificados estilo KRMA VERSO: cian + morado, brillo y relieve */
+:root{--krma-button:linear-gradient(110deg,#00eaff 0%,#6688ff 48%,#b26bff 100%)}
+.btn,.buy,.pay-product,.nav-cta{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  background:var(--krma-button)!important;color:#080817!important;
+  border:1px solid #a9f7ff!important;border-radius:12px;
+  font-weight:900;letter-spacing:.025em;
+  box-shadow:0 0 10px #00eaff55,0 0 20px #9b5cff35,inset 0 1px 0 #ffffff88;
+  transition:transform .2s ease,box-shadow .2s ease,filter .2s ease;
+}
+.btn:hover,.buy:hover,.pay-product:hover,.nav-cta:hover{
+  transform:translateY(-2px);filter:brightness(1.12);
+  box-shadow:0 0 15px #00eaff99,0 0 28px #9b5cff77,inset 0 1px 0 #ffffffaa;
+}
+.btn-secondary,.btn-green,.btn-primary{
+  background:var(--krma-button)!important;color:#080817!important;
+  border:1px solid #a9f7ff!important;
+}
+.btn-danger{border-radius:12px;font-weight:900;box-shadow:0 0 12px #ff829755}
+.buy,.pay-product{min-height:44px}
+.nav-cta{padding:10px 15px;border-radius:12px}
+@media(prefers-reduced-motion:reduce){.btn,.buy,.pay-product,.nav-cta{transition:none}.btn:hover,.buy:hover,.pay-product:hover,.nav-cta:hover{transform:none}}
+
