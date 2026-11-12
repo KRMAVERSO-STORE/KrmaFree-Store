@@ -401,15 +401,18 @@
       if (brand) {
         icon.classList.add("brand-icon");
         icon.style.setProperty("--brand-color", "#" + brand[2]);
-        const logo = document.createElement("img");
-        logo.className = "product-logo";
-        logo.src = "https://cdn.simpleicons.org/" + brand[1] + "/FFFFFF";
-        logo.alt = brand[1] + " logo";
-        logo.loading = "lazy";
-        logo.onerror = () => {
-          icon.textContent = iconFor(product);
-          icon.classList.remove("brand-icon");
-        };
+        // Wordmark local: no depende de un CDN externo que pueda bloquearse.
+        const logo = document.createElement("span");
+        logo.className = "product-logo product-wordmark";
+        logo.setAttribute("aria-label", brand[1] + " logo");
+        logo.textContent = ({
+          netflix: "N", spotify: "≋", disneyplus: "D+", hbo: "MAX",
+          youtube: "▶", canva: "Canva", openai: "AI", googlegemini: "✦",
+          claude: "C", primevideo: "prime", paramountplus: "P+",
+          crunchyroll: "CR", capcut: "剪", filmora: "F", deezer: "≋",
+          duolingo: "Duo", tiktok: "♪", twitch: "T", xbox: "X",
+          playstation: "PS", steam: "STEAM", garena: "FF"
+        })[brand[1]] || brand[1].slice(0, 2).toUpperCase();
         icon.appendChild(logo);
       } else {
         icon.textContent = iconFor(product);
