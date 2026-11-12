@@ -1,0 +1,442 @@
+[
+  {
+    "name": "Netflix — Perfil (33 días)",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Perfiles",
+    "price": 14000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Netflix — Plan/perfil (33 días)",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Perfiles",
+    "price": 15200,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Netflix — Plan/perfil (29 días)",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Perfiles",
+    "price": 14500,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Netflix — Internacional",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Perfiles",
+    "price": 12500,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Netflix — Perfil privado",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Perfiles",
+    "price": 18000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Amazon Prime Video — Pantalla",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Perfiles",
+    "price": 10000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Prime Video — Otra modalidad",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Perfiles",
+    "price": 5000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Max / HBO Max",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Suscripciones",
+    "price": 10000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Disney+ — Premium",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Suscripciones",
+    "price": 18000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Disney+ — Estándar",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Suscripciones",
+    "price": 15000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Paramount+ — Pantalla",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Suscripciones",
+    "price": 15000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "ViX Premium — Pantalla",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Suscripciones",
+    "price": 10000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Crunchyroll — Pantalla",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Suscripciones",
+    "price": 8000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Plex Premium — Pantalla",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Suscripciones",
+    "price": 7000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Jellyfin",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Suscripciones",
+    "price": 9500,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Tele Latino",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Suscripciones",
+    "price": 10000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Viki — Pantalla",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Suscripciones",
+    "price": 8500,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "YouTube Premium — Familiar",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Suscripciones",
+    "price": 15000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "YouTube Premium — Invitación",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Suscripciones",
+    "price": 15000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Spotify Premium — 3 meses",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Suscripciones",
+    "price": 21000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Spotify Premium — 6 meses",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Suscripciones",
+    "price": 39000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Spotify Premium — 1 año",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Suscripciones",
+    "price": 83000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Spotify Premium — Plan regular",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Suscripciones",
+    "price": 15000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Deezer Premium",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Suscripciones",
+    "price": 15000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Combo Netflix + Spotify",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Perfiles",
+    "price": 21000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Gemini IA — 12 meses",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Aplicaciones",
+    "price": 33000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Gemini IA — 1 mes",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Aplicaciones",
+    "price": 15000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "ChatGPT Go — Compartida",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Aplicaciones",
+    "price": 20000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "ChatGPT Plus",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Aplicaciones",
+    "price": 24000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Canva Pro — 3 meses",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Aplicaciones",
+    "price": 12000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Canva Pro",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Aplicaciones",
+    "price": 6000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Microsoft Office 365 — 1 año",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Aplicaciones",
+    "price": 19000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Google One — 5TB",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Aplicaciones",
+    "price": 15000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Filmora",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Aplicaciones",
+    "price": 20000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "CapCut Pro",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Aplicaciones",
+    "price": 16000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Duolingo Super",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Aplicaciones",
+    "price": 15000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "IPTV — Completa 6 meses",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Suscripciones",
+    "price": 36000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "IPTV — 1 mes/pantalla",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Suscripciones",
+    "price": 9500,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "IPTV Elite — 1 año",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Suscripciones",
+    "price": 48000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "DIRECTV GO Full — opción 1",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Suscripciones",
+    "price": 19000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "DIRECTV GO Full — opción 2",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Suscripciones",
+    "price": 38000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Flujo TV — 1 día",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Suscripciones",
+    "price": 9500,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "XuperTV — TV ilimitado",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Suscripciones",
+    "price": 20000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "XuperTV — Android 7 días",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Suscripciones",
+    "price": 3000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "WIN Sports+",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Suscripciones",
+    "price": 35000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Surfshark VPN",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Aplicaciones",
+    "price": 18000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Xbox Game Pass",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Juegos",
+    "price": 48000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "EA SPORTS FC 26 — Digital PS4",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Juegos",
+    "price": 93000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Grand Theft Auto V — Digital",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Juegos",
+    "price": 102000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Steam — Recargas y tarjetas",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Juegos",
+    "price": null,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "PlayStation — Recargas y contenido",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Juegos",
+    "price": null,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Recargas para juegos",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Juegos",
+    "price": null,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Celulares nuevos y usados",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Tecnología",
+    "price": null,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Accesorios tecnológicos",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Tecnología",
+    "price": null,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Pornhub / Hub — 1 mes",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Suscripciones",
+    "price": 9500,
+    "image": "",
+    "active": true
+  }
+]
