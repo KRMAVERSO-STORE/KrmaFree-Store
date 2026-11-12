@@ -82,6 +82,8 @@ class User(Base):
     email = Column(String(180), unique=True, index=True, nullable=False)
     password = Column(String(255), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
+    referral_code = Column(String(24), unique=True, index=True, nullable=True)
+    referred_by_user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
 
 
 class Product(Base):
@@ -108,7 +110,23 @@ class Order(Base):
     total = Column(Float, nullable=False)
     status = Column(String(40), default="pendiente")
     payment_reference = Column(String(180), nullable=True)
+    discount = Column(Float, default=0)
+    coupon_id = Column(Integer, ForeignKey("coupons.id"), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class Coupon(Base):
+    __tablename__ = "coupons"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    code = Column(String(32), unique=True, nullable=False, index=True)
+    amount = Column(Float, nullable=False, default=3000)
+    status = Column(String(24), nullable=False, default="disponible")
+    source_user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    expires_at = Column(DateTime, nullable=False)
+    redeemed_at = Column(DateTime, nullable=True)
 
 
 # ==================================================
@@ -119,6 +137,7 @@ class RegisterData(BaseModel):
     name: str
     email: EmailStr
     password: str
+    referral_code: str | None = None
 
 
 class LoginData(BaseModel):
@@ -134,6 +153,7 @@ class OrderData(BaseModel):
     quantity: int = 1
     total: float | None = None
     payment_reference: str | None = None
+    coupon_code: str | None = None
 
 
 class ProductData(BaseModel):
@@ -182,6 +202,13 @@ def startup():
     with engine.begin() as connection:
         connection.execute(text("SELECT 1"))
     Base.metadata.create_all(bind=engine)
+
+    # Migraciones aditivas: conservan usuarios, productos y pedidos existentes.
+    with engine.begin() as connection:
+        connection.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS referral_code VARCHAR(24)"))
+        connection.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS referred_by_user_id INTEGER REFERENCES users(id)"))
+        connection.execute(text("ALTER TABLE orders ADD COLUMN IF NOT EXISTS discount FLOAT NOT NULL DEFAULT 0"))
+        connection.execute(text("ALTER TABLE orders ADD COLUMN IF NOT EXISTS coupon_id INTEGER REFERENCES coupons(id)"))
 
     # Permitir productos cuyo precio se confirma por WhatsApp.
     with engine.begin() as connection:
@@ -377,10 +404,23 @@ def register(
             detail="La contraseña debe tener al menos 8 caracteres",
         )
 
+    referrer = None
+    referral_code = (data.referral_code or "").strip().upper()
+    if referral_code:
+        referrer = db.query(User).filter(User.referral_code == referral_code).first()
+        if not referrer:
+            raise HTTPException(status_code=400, detail="El código de referido no existe.")
+
+    own_code = secrets.token_hex(4).upper()
+    while db.query(User).filter(User.referral_code == own_code).first():
+        own_code = secrets.token_hex(4).upper()
+
     user = User(
         name=data.name.strip(),
         email=data.email.lower(),
         password=password_hash.hash(data.password),
+        referral_code=own_code,
+        referred_by_user_id=referrer.id if referrer else None,
     )
 
     db.add(user)
@@ -443,16 +483,24 @@ def login(
 # ==================================================
 
 @app.get("/api/me")
-def get_me(user: User = Depends(get_current_user)):
+def get_me(db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    if not user.referral_code:
+        user.referral_code = secrets.token_hex(4).upper()
+        db.commit()
+    coupons = db.query(Coupon).filter(Coupon.user_id == user.id).order_by(Coupon.id.desc()).all()
+    paid_orders = db.query(Order).filter(Order.user_id == user.id, Order.status == "pagado").count()
     return {
         "id": user.id,
         "name": user.name,
         "email": user.email,
-        "referral_code": None,
-        "referral_link": None,
-        "first_purchase_available": False,
-        "coupons": [],
-        "orders": [],
+        "referral_code": user.referral_code,
+        "referral_link": "https://krmaverso-store.github.io/KrmaFree-Store/cuenta.html?ref=" + user.referral_code,
+        "first_purchase_available": paid_orders == 0,
+        "referred_by": user.referred_by_user_id is not None,
+        "coupons": [{
+            "id": coupon.id, "code": coupon.code, "amount": coupon.amount,
+            "status": coupon.status, "expires_at": coupon.expires_at.isoformat(),
+        } for coupon in coupons],
     }
 
 
@@ -485,13 +533,32 @@ def create_order(
         # Compatibilidad temporal con clientes antiguos; no confiar en precios enviados por el navegador.
         raise HTTPException(status_code=400, detail="Debes seleccionar un producto válido del catálogo")
 
+    coupon = None
+    discount = 0.0
+    if data.coupon_code:
+        coupon = db.query(Coupon).filter(
+            Coupon.code == data.coupon_code.strip().upper(),
+            Coupon.user_id == user.id,
+            Coupon.status == "disponible",
+        ).first()
+        if not coupon:
+            raise HTTPException(status_code=400, detail="Cupón inválido, usado o no pertenece a tu cuenta.")
+        if coupon.expires_at < datetime.utcnow():
+            coupon.status = "vencido"
+            db.commit()
+            raise HTTPException(status_code=400, detail="Este cupón ya venció.")
+        discount = min(float(coupon.amount), total)
+        coupon.status = "reservado"
+
     order = Order(
         user_id=user.id,
         customer_name=(data.customer_name or user.name).strip(),
         customer_email=data.customer_email or user.email,
         product_name=product_name,
         quantity=data.quantity,
-        total=total,
+        total=round(total - discount, 2),
+        discount=discount,
+        coupon_id=coupon.id if coupon else None,
         payment_reference=data.payment_reference,
     )
 
@@ -504,8 +571,8 @@ def create_order(
         "order_id": order.id,
         "product_name": order.product_name,
         "subtotal": total,
-        "discount": 0,
-        "total": total,
+        "discount": discount,
+        "total": round(total - discount, 2),
         "status": order.status,
     }
 
@@ -528,6 +595,7 @@ def get_my_orders(
             "product_name": order.product_name,
             "quantity": order.quantity,
             "total": order.total,
+            "discount": order.discount or 0,
             "status": order.status,
             "created_at": order.created_at.isoformat(),
         }
@@ -547,6 +615,10 @@ def cancel_order(
     if order.status != "pendiente":
         raise HTTPException(status_code=400, detail="Solo se pueden cancelar pedidos pendientes")
     order.status = "cancelado"
+    if order.coupon_id:
+        coupon = db.query(Coupon).filter(Coupon.id == order.coupon_id).first()
+        if coupon and coupon.status == "reservado":
+            coupon.status = "disponible"
     db.commit()
     return {"message": "Pedido cancelado", "order_id": order.id, "status": order.status}
 
@@ -594,11 +666,40 @@ def mark_order_paid(
             detail="Pedido no encontrado",
         )
 
+    if order.status == "pagado":
+        return {"message": "Este pedido ya estaba pagado.", "order_id": order.id, "status": order.status}
+
+    previous_paid = db.query(Order).filter(
+        Order.user_id == order.user_id, Order.status == "pagado"
+    ).count() if order.user_id else 0
     order.status = "pagado"
+    if order.coupon_id:
+        coupon = db.query(Coupon).filter(Coupon.id == order.coupon_id).first()
+        if coupon:
+            coupon.status = "usado"
+            coupon.redeemed_at = datetime.utcnow()
+
+    # Al confirmar la primera compra de un referido, ambos reciben un cupón.
+    if order.user_id and previous_paid == 0:
+        buyer = db.query(User).filter(User.id == order.user_id).first()
+        if buyer and buyer.referred_by_user_id:
+            referrer = db.query(User).filter(User.id == buyer.referred_by_user_id).first()
+            already_rewarded = db.query(Coupon).filter(Coupon.source_user_id == buyer.id).count()
+            if referrer and not already_rewarded:
+                expiry = datetime.utcnow() + timedelta(days=90)
+                for beneficiary in (referrer, buyer):
+                    code = "KRMA" + secrets.token_hex(3).upper()
+                    while db.query(Coupon).filter(Coupon.code == code).first():
+                        code = "KRMA" + secrets.token_hex(3).upper()
+                    db.add(Coupon(
+                        user_id=beneficiary.id, code=code, amount=3000,
+                        status="disponible", source_user_id=buyer.id, expires_at=expiry,
+                    ))
+
     db.commit()
 
     return {
-        "message": "Pedido marcado como pagado",
+        "message": "Pago confirmado. Si era la primera compra de un referido, los dos cupones ya están disponibles.",
         "order_id": order.id,
         "status": order.status,
     }
