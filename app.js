@@ -350,14 +350,20 @@
         (product.category || "")
       );
       let matchesCategory = !pageCategory.length || pageCategory.some(value => category.includes(normalize(value)));
-      if (page === "perfiles" || page === "cuentas") matchesCategory = isProfileAccess(product);
+      // La página PERFILES reúne el catálogo completo de 55 productos.
+      // Las demás páginas conservan sus filtros por categoría.
+      if (page === "perfiles" || page === "cuentas") matchesCategory = true;
       if (page === "suscripciones") matchesCategory = matchesCategory && !isProfileAccess(product);
       return matchesCategory && (!search || text.includes(search));
     });
 
     grid.innerHTML = "";
 
-    filtered.forEach(product => {
+    const displayList = (page === "perfiles" || page === "cuentas")
+      ? filtered.slice().reverse()
+      : filtered;
+
+    displayList.forEach(product => {
       const card = document.createElement("article");
       card.className = "product-card";
 
@@ -408,11 +414,11 @@
     });
 
     if ($("resultCount")) {
-      $("resultCount").textContent = filtered.length + " productos";
+      $("resultCount").textContent = displayList.length + " productos";
     }
 
     if ($("empty")) {
-      $("empty").classList.toggle("hidden", filtered.length > 0);
+      $("empty").classList.toggle("hidden", displayList.length > 0);
     }
   }
 
