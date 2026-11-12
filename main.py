@@ -96,6 +96,7 @@ class Product(Base):
     price = Column(Float, nullable=True, default=None)
     image = Column(Text, default="")
     active = Column(Boolean, default=True)
+    wholesale_price = Column(Float, nullable=True, default=None)
 
 
 class Order(Base):
@@ -112,6 +113,10 @@ class Order(Base):
     payment_reference = Column(String(180), nullable=True)
     discount = Column(Float, default=0)
     coupon_id = Column(Integer, ForeignKey("coupons.id"), nullable=True)
+    reseller_id = Column(Integer, ForeignKey("users.id"), nullable=True, index=True)
+    reseller_slug = Column(String(80), nullable=True)
+    wholesale_total = Column(Float, nullable=True)
+    reseller_profit = Column(Float, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
@@ -127,6 +132,39 @@ class Coupon(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     expires_at = Column(DateTime, nullable=False)
     redeemed_at = Column(DateTime, nullable=True)
+
+
+class ResellerStore(Base):
+    __tablename__ = "reseller_stores"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), unique=True, nullable=False, index=True)
+    slug = Column(String(80), unique=True, nullable=False, index=True)
+    store_name = Column(String(120), nullable=False)
+    status = Column(String(24), nullable=False, default="pendiente")
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class ResellerProductPrice(Base):
+    __tablename__ = "reseller_product_prices"
+
+    id = Column(Integer, primary_key=True, index=True)
+    reseller_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    product_id = Column(Integer, ForeignKey("products.id"), nullable=False, index=True)
+    retail_price = Column(Float, nullable=False)
+    __table_args__ = ()
+
+
+class ResellerWithdrawal(Base):
+    __tablename__ = "reseller_withdrawals"
+
+    id = Column(Integer, primary_key=True, index=True)
+    reseller_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    amount = Column(Float, nullable=False)
+    payout_method = Column(String(80), nullable=False)
+    payout_details = Column(Text, nullable=False)
+    status = Column(String(24), nullable=False, default="pendiente")
+    created_at = Column(DateTime, default=datetime.utcnow)
 
 
 # ==================================================
@@ -154,6 +192,22 @@ class OrderData(BaseModel):
     total: float | None = None
     payment_reference: str | None = None
     coupon_code: str | None = None
+    reseller_slug: str | None = None
+
+
+class ResellerApplyData(BaseModel):
+    store_name: str
+
+
+class ResellerPriceData(BaseModel):
+    product_id: int
+    retail_price: float
+
+
+class ResellerWithdrawalData(BaseModel):
+    amount: float
+    payout_method: str
+    payout_details: str
 
 
 class ProductData(BaseModel):
@@ -214,6 +268,12 @@ def startup():
     # Permitir productos cuyo precio se confirma por WhatsApp.
     with engine.begin() as connection:
         connection.execute(text("ALTER TABLE products ALTER COLUMN price DROP NOT NULL"))
+        connection.execute(text("ALTER TABLE products ADD COLUMN IF NOT EXISTS wholesale_price FLOAT"))
+        connection.execute(text("ALTER TABLE orders ADD COLUMN IF NOT EXISTS reseller_id INTEGER REFERENCES users(id)"))
+        connection.execute(text("ALTER TABLE orders ADD COLUMN IF NOT EXISTS reseller_slug VARCHAR(80)"))
+        connection.execute(text("ALTER TABLE orders ADD COLUMN IF NOT EXISTS wholesale_total FLOAT"))
+        connection.execute(text("ALTER TABLE orders ADD COLUMN IF NOT EXISTS reseller_profit FLOAT"))
+        connection.execute(text("CREATE INDEX IF NOT EXISTS ix_orders_reseller_id ON orders (reseller_id)"))
 
     # Recuperar el catálogo histórico una sola vez, solo si la tabla está vacía.
     db = SessionLocal()
@@ -530,6 +590,27 @@ def create_order(
                 detail="Este producto requiere confirmar el precio por WhatsApp",
             )
         total = float(product.price) * data.quantity
+        wholesale_total = float(product.wholesale_price or 0) * data.quantity
+        reseller = None
+        reseller_slug = (data.reseller_slug or "").strip().lower()
+        if reseller_slug:
+            store = db.query(ResellerStore).filter(
+                ResellerStore.slug == reseller_slug,
+                ResellerStore.status == "aprobado",
+            ).first()
+            if not store:
+                raise HTTPException(status_code=404, detail="La tienda del revendedor no está disponible.")
+            reseller = db.query(User).filter(User.id == store.user_id).first()
+            custom_price = db.query(ResellerProductPrice).filter(
+                ResellerProductPrice.reseller_id == store.user_id,
+                ResellerProductPrice.product_id == product.id,
+            ).first()
+            retail_price = float(custom_price.retail_price) if custom_price else float(product.price)
+            if retail_price < wholesale_total / data.quantity:
+                raise HTTPException(status_code=400, detail="El precio de venta no puede ser inferior al precio mayorista.")
+            total = retail_price * data.quantity
+            if reseller.id == user.id:
+                raise HTTPException(status_code=400, detail="No puedes realizar pedidos desde tu propia tienda.")
     else:
         # Compatibilidad temporal con clientes antiguos; no confiar en precios enviados por el navegador.
         raise HTTPException(status_code=400, detail="Debes seleccionar un producto válido del catálogo")
@@ -560,6 +641,10 @@ def create_order(
         total=round(total - discount, 2),
         discount=discount,
         coupon_id=coupon.id if coupon else None,
+        reseller_id=reseller.id if reseller else None,
+        reseller_slug=reseller_slug or None,
+        wholesale_total=wholesale_total if reseller else None,
+        reseller_profit=round(total - wholesale_total, 2) if reseller else None,
         payment_reference=data.payment_reference,
     )
 
@@ -575,6 +660,7 @@ def create_order(
         "discount": discount,
         "total": round(total - discount, 2),
         "status": order.status,
+        "reseller_profit": order.reseller_profit,
     }
 
 
@@ -622,6 +708,186 @@ def cancel_order(
             coupon.status = "disponible"
     db.commit()
     return {"message": "Pedido cancelado", "order_id": order.id, "status": order.status}
+
+
+
+
+# ==================================================
+# PROGRAMA DE REVENDEDORES
+# ==================================================
+
+def get_reseller_store(db: Session, user: User):
+    store = db.query(ResellerStore).filter(ResellerStore.user_id == user.id).first()
+    if not store:
+        raise HTTPException(status_code=403, detail="Aún no has solicitado tu tienda de revendedor.")
+    if store.status != "aprobado":
+        raise HTTPException(status_code=403, detail="Tu tienda está pendiente de aprobación o suspendida.")
+    return store
+
+
+@app.post("/api/resellers/apply")
+def apply_reseller(data: ResellerApplyData, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    store_name = data.store_name.strip()
+    if len(store_name) < 3:
+        raise HTTPException(status_code=400, detail="El nombre de la tienda debe tener al menos 3 caracteres.")
+    existing = db.query(ResellerStore).filter(ResellerStore.user_id == user.id).first()
+    if existing:
+        return {"status": existing.status, "store_name": existing.store_name, "slug": existing.slug}
+    base = "".join(ch.lower() if ch.isalnum() else "-" for ch in store_name).strip("-")
+    base = "-".join(part for part in base.split("-") if part)[:55] or "tienda"
+    slug = base
+    suffix = 2
+    while db.query(ResellerStore).filter(ResellerStore.slug == slug).first():
+        slug = f"{base}-{suffix}"
+        suffix += 1
+    store = ResellerStore(user_id=user.id, slug=slug, store_name=store_name, status="pendiente")
+    db.add(store)
+    db.commit()
+    return {"status": store.status, "store_name": store.store_name, "slug": store.slug}
+
+
+@app.get("/api/resellers/me")
+def reseller_dashboard(db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    store = db.query(ResellerStore).filter(ResellerStore.user_id == user.id).first()
+    if not store:
+        return {"applied": False, "status": "no_solicitado"}
+    orders = db.query(Order).filter(Order.reseller_id == user.id).order_by(Order.id.desc()).all()
+    paid = [o for o in orders if o.status == "pagado"]
+    earned = sum(float(o.reseller_profit or 0) for o in paid)
+    withdrawals = db.query(ResellerWithdrawal).filter(ResellerWithdrawal.reseller_id == user.id).all()
+    withdrawn = sum(float(w.amount) for w in withdrawals if w.status in ("pendiente", "aprobado", "pagado"))
+    products = db.query(Product).filter(Product.active == True).order_by(Product.id.desc()).all()
+    prices = {p.product_id: p.retail_price for p in db.query(ResellerProductPrice).filter(ResellerProductPrice.reseller_id == user.id).all()}
+    return {
+        "applied": True, "status": store.status, "store_name": store.store_name, "slug": store.slug,
+        "store_url": "https://krmaverso-store.github.io/KrmaFree-Store/tienda.html?tienda=" + store.slug,
+        "balance": round(earned - withdrawn, 2), "total_earned": round(earned, 2),
+        "paid_sales": len(paid),
+        "orders": [{"id": o.id, "product_name": o.product_name, "total": o.total, "profit": o.reseller_profit or 0, "status": o.status, "created_at": o.created_at.isoformat()} for o in orders],
+        "products": [{
+            "id": p.id, "name": p.name, "description": p.description, "category": p.category,
+            "wholesale_price": p.wholesale_price, "retail_price": prices.get(p.id, p.price),
+            "active": p.active,
+        } for p in products],
+        "withdrawals": [{"id": w.id, "amount": w.amount, "method": w.payout_method, "status": w.status, "created_at": w.created_at.isoformat()} for w in withdrawals],
+    }
+
+
+@app.put("/api/resellers/prices")
+def set_reseller_price(data: ResellerPriceData, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    get_reseller_store(db, user)
+    product = db.query(Product).filter(Product.id == data.product_id, Product.active == True).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Producto no encontrado.")
+    wholesale = float(product.wholesale_price if product.wholesale_price is not None else product.price or 0)
+    if data.retail_price < wholesale:
+        raise HTTPException(status_code=400, detail="Tu precio de venta debe ser igual o superior al mayorista.")
+    price = db.query(ResellerProductPrice).filter(ResellerProductPrice.reseller_id == user.id, ResellerProductPrice.product_id == product.id).first()
+    if price:
+        price.retail_price = data.retail_price
+    else:
+        db.add(ResellerProductPrice(reseller_id=user.id, product_id=product.id, retail_price=data.retail_price))
+    db.commit()
+    return {"message": "Precio de venta actualizado.", "product_id": product.id, "retail_price": data.retail_price, "profit_per_unit": round(data.retail_price - wholesale, 2)}
+
+
+@app.get("/api/store/{slug}")
+def public_reseller_store(slug: str, db: Session = Depends(get_db)):
+    store = db.query(ResellerStore).filter(ResellerStore.slug == slug.lower(), ResellerStore.status == "aprobado").first()
+    if not store:
+        raise HTTPException(status_code=404, detail="Tienda no encontrada.")
+    products = db.query(Product).filter(Product.active == True).order_by(Product.id.desc()).all()
+    prices = {p.product_id: p.retail_price for p in db.query(ResellerProductPrice).filter(ResellerProductPrice.reseller_id == store.user_id).all()}
+    return {
+        "store_name": store.store_name,
+        "slug": store.slug,
+        "products": [{
+            "id": p.id, "name": p.name, "description": p.description, "category": p.category,
+            "price": prices.get(p.id, p.price), "image": p.image,
+        } for p in products],
+    }
+
+
+@app.post("/api/resellers/withdrawals")
+def request_reseller_withdrawal(data: ResellerWithdrawalData, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    get_reseller_store(db, user)
+    if data.amount <= 0 or not data.payout_method.strip() or not data.payout_details.strip():
+        raise HTTPException(status_code=400, detail="Completa un monto y los datos de pago válidos.")
+    paid_orders = db.query(Order).filter(Order.reseller_id == user.id, Order.status == "pagado").all()
+    earned = sum(float(o.reseller_profit or 0) for o in paid_orders)
+    withdrawals = db.query(ResellerWithdrawal).filter(ResellerWithdrawal.reseller_id == user.id).all()
+    reserved = sum(float(w.amount) for w in withdrawals if w.status in ("pendiente", "aprobado", "pagado"))
+    available = round(earned - reserved, 2)
+    if data.amount > available:
+        raise HTTPException(status_code=400, detail=f"Saldo disponible insuficiente: {available:.0f} COP.")
+    withdrawal = ResellerWithdrawal(reseller_id=user.id, amount=data.amount, payout_method=data.payout_method.strip(), payout_details=data.payout_details.strip())
+    db.add(withdrawal)
+    db.commit()
+    return {"message": "Solicitud de retiro enviada.", "id": withdrawal.id, "status": withdrawal.status}
+
+
+@app.get("/api/admin/resellers")
+def admin_list_resellers(db: Session = Depends(get_db), admin: bool = Depends(verify_admin)):
+    stores = db.query(ResellerStore).order_by(ResellerStore.id.desc()).all()
+    return [{
+        "id": s.id, "user_id": s.user_id, "store_name": s.store_name, "slug": s.slug, "status": s.status,
+        "email": db.query(User.email).filter(User.id == s.user_id).scalar(),
+        "name": db.query(User.name).filter(User.id == s.user_id).scalar(),
+    } for s in stores]
+
+
+@app.patch("/api/admin/resellers/{store_id}/{decision}")
+def admin_decide_reseller(store_id: int, decision: str, db: Session = Depends(get_db), admin: bool = Depends(verify_admin)):
+    if decision not in ("approve", "reject", "suspend"):
+        raise HTTPException(status_code=400, detail="Acción no válida.")
+    store = db.query(ResellerStore).filter(ResellerStore.id == store_id).first()
+    if not store:
+        raise HTTPException(status_code=404, detail="Solicitud no encontrada.")
+    store.status = {"approve": "aprobado", "reject": "rechazado", "suspend": "suspendido"}[decision]
+    db.commit()
+    return {"id": store.id, "status": store.status}
+
+
+@app.put("/api/admin/products/{product_id}/wholesale")
+def admin_set_wholesale_price(product_id: int, payload: dict, db: Session = Depends(get_db), admin: bool = Depends(verify_admin)):
+    price = payload.get("wholesale_price")
+    if price is not None and (not isinstance(price, (int, float)) or price < 0):
+        raise HTTPException(status_code=400, detail="Precio mayorista inválido.")
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Producto no encontrado.")
+    product.wholesale_price = price
+    db.commit()
+    return {"product_id": product.id, "wholesale_price": product.wholesale_price}
+
+
+@app.get("/api/admin/reseller-withdrawals")
+def admin_reseller_withdrawals(db: Session = Depends(get_db), admin: bool = Depends(verify_admin)):
+    items = db.query(ResellerWithdrawal).order_by(ResellerWithdrawal.id.desc()).all()
+    return [{
+        "id": w.id, "reseller_id": w.reseller_id, "amount": w.amount, "method": w.payout_method,
+        "details": w.payout_details, "status": w.status,
+        "store_name": db.query(ResellerStore.store_name).filter(ResellerStore.user_id == w.reseller_id).scalar(),
+    } for w in items]
+
+
+@app.patch("/api/admin/reseller-withdrawals/{withdrawal_id}/{decision}")
+def admin_decide_withdrawal(withdrawal_id: int, decision: str, db: Session = Depends(get_db), admin: bool = Depends(verify_admin)):
+    if decision not in ("approve", "pay", "reject"):
+        raise HTTPException(status_code=400, detail="Acción no válida.")
+    item = db.query(ResellerWithdrawal).filter(ResellerWithdrawal.id == withdrawal_id).first()
+    if not item:
+        raise HTTPException(status_code=404, detail="Retiro no encontrado.")
+    if decision == "reject" and item.status in ("pendiente", "aprobado"):
+        item.status = "rechazado"
+    elif decision == "approve" and item.status == "pendiente":
+        item.status = "aprobado"
+    elif decision == "pay" and item.status == "aprobado":
+        item.status = "pagado"
+    else:
+        raise HTTPException(status_code=400, detail="No se puede aplicar esa acción al estado actual.")
+    db.commit()
+    return {"id": item.id, "status": item.status}
 
 
 # ==================================================
