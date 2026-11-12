@@ -1,6 +1,8 @@
 
+import json
 import os
 import secrets
+from pathlib import Path
 from datetime import datetime, timedelta, timezone
 
 import jwt
@@ -30,7 +32,11 @@ from sqlalchemy.orm import declarative_base, sessionmaker, Session
 DATABASE_URL = os.getenv("DATABASE_URL", "")
 JWT_SECRET = os.getenv("JWT_SECRET", "")
 ADMIN_SECRET = os.getenv("ADMIN_SECRET", "")
-CORS_ORIGINS = [origin.strip() for origin in os.getenv("CORS_ORIGINS", "https://krmaverse.github.io").split(",") if origin.strip()]
+DEFAULT_CORS_ORIGINS = ["https://krmaverse.github.io", "https://krmaverso-store.github.io"]
+CORS_ORIGINS = list(dict.fromkeys(
+    DEFAULT_CORS_ORIGINS
+    + [origin.strip() for origin in os.getenv("CORS_ORIGINS", "").split(",") if origin.strip()]
+))
 
 if not DATABASE_URL:
     raise RuntimeError("Falta configurar DATABASE_URL en Render.")
@@ -85,7 +91,7 @@ class Product(Base):
     name = Column(String(180), nullable=False)
     description = Column(Text, default="")
     category = Column(String(100), default="Digital")
-    price = Column(Float, nullable=False, default=0)
+    price = Column(Float, nullable=True, default=None)
     image = Column(Text, default="")
     active = Column(Boolean, default=True)
 
@@ -134,7 +140,7 @@ class ProductData(BaseModel):
     name: str
     description: str = ""
     category: str = "Digital"
-    price: float
+    price: float | None = None
     image: str = ""
     active: bool = True
 
@@ -176,6 +182,28 @@ def startup():
     with engine.begin() as connection:
         connection.execute(text("SELECT 1"))
     Base.metadata.create_all(bind=engine)
+
+    # Permitir productos cuyo precio se confirma por WhatsApp.
+    with engine.begin() as connection:
+        connection.execute(text("ALTER TABLE products ALTER COLUMN price DROP NOT NULL"))
+
+    # Recuperar el catálogo histórico una sola vez, solo si la tabla está vacía.
+    db = SessionLocal()
+    try:
+        if db.query(Product).count() == 0:
+            catalog_path = Path(__file__).with_name("catalog_seed.json")
+            if catalog_path.exists():
+                with catalog_path.open("r", encoding="utf-8") as file:
+                    catalog_items = json.load(file)
+                for item in catalog_items:
+                    db.add(Product(**item))
+                db.commit()
+                print(f"Catálogo KRMA VERSO cargado: {len(catalog_items)} productos.")
+            else:
+                print("No se encontró catalog_seed.json; catálogo sin precargar.")
+    finally:
+        db.close()
+
     print("Base de datos KRMA VERSO conectada y tablas verificadas.")
 
 
@@ -307,7 +335,7 @@ def create_product(
     db: Session = Depends(get_db),
     admin: bool = Depends(verify_admin),
 ):
-    if data.price < 0:
+    if data.price is not None and data.price < 0:
         raise HTTPException(status_code=400, detail="Precio inválido")
 
     product = Product(**data.model_dump())
@@ -447,6 +475,11 @@ def create_order(
         if not product:
             raise HTTPException(status_code=404, detail="Producto no encontrado o no disponible")
         product_name = product.name
+        if product.price is None:
+            raise HTTPException(
+                status_code=400,
+                detail="Este producto requiere confirmar el precio por WhatsApp",
+            )
         total = float(product.price) * data.quantity
     else:
         # Compatibilidad temporal con clientes antiguos; no confiar en precios enviados por el navegador.
