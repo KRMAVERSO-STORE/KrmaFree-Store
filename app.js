@@ -406,7 +406,8 @@
     };
 
     const matchesPage = product => {
-      if (page === "perfiles" || page === "cuentas") return isProfileProduct(product);
+      if (page === "perfiles") return !isAIProduct(product) && !isApplicationProduct(product) && !isGameProduct(product) && !isTechnologyProduct(product);
+      if (page === "cuentas") return false;
       if (page === "suscripciones") return isSubscriptionProduct(product);
       if (page === "aplicaciones") return isApplicationProduct(product) && !isAIProduct(product);
       if (page === "inteligencia-artificial") return isAIProduct(product);
