@@ -1,153 +1,606 @@
+
 (() => {
   "use strict";
+
   const CFG = window.KRMA_CONFIG || {};
-  const API = (CFG.API_BASE || "").replace(/\/$/, "");
+  const API = (CFG.API_BASE || "https://krmafree-verso-store.onrender.com").replace(/\/$/, "");
   const WOMPI = CFG.WOMPI_URL || "";
   const WA = "https://wa.me/" + (CFG.WHATSAPP_NUMBER || "573215201208") + "?text=";
+
   const $ = id => document.getElementById(id);
+
   let token = localStorage.getItem("krma_token") || "";
   let products = [];
   let adminSecret = "";
 
-  function money(v){ return "$" + Number(v || 0).toLocaleString("es-CO") + " COP"; }
-  function showMessage(msg){ const el=$("message"); if(el){el.textContent=msg;el.classList.remove("hidden");} const er=$("error");if(er){er.textContent="";er.classList.add("hidden");} }
-  function showError(msg){ const el=$("error");if(el){el.textContent=msg;el.classList.remove("hidden");}const m=$("message");if(m){m.textContent="";m.classList.add("hidden");} }
-  async function api(path, options={}) {
-    const headers={"Content-Type":"application/json",...(options.headers||{})};
-    if(token) headers.Authorization="Bearer "+token;
+  function money(value) {
+    return "$" + Number(value || 0).toLocaleString("es-CO") + " COP";
+  }
+
+  function showMessage(message) {
+    const el = $("message");
+    if (el) {
+      el.textContent = message;
+      el.classList.remove("hidden");
+    }
+
+    const error = $("error");
+    if (error) {
+      error.textContent = "";
+      error.classList.add("hidden");
+    }
+  }
+
+  function showError(message) {
+    const el = $("error");
+    if (el) {
+      el.textContent = message;
+      el.classList.remove("hidden");
+    }
+
+    const msg = $("message");
+    if (msg) {
+      msg.textContent = "";
+      msg.classList.add("hidden");
+    }
+  }
+
+  async function api(path, options = {}) {
+    const headers = {
+      "Content-Type": "application/json",
+      ...(options.headers || {})
+    };
+
+    if (token) {
+      headers.Authorization = "Bearer " + token;
+    }
+
     let response;
-    try { response=await fetch(API+path,{...options,headers}); }
-    catch(e){ throw new Error("No se pudo conectar con el servidor. Comprueba que Render esté activo."); }
-    const data=await response.json().catch(()=>({}));
-    if(!response.ok) throw new Error(data.detail || "Error de conexión con el servidor.");
+
+    try {
+      response = await fetch(API + path, {
+        ...options,
+        headers
+      });
+    } catch (error) {
+      throw new Error("No se pudo conectar con el servidor. Comprueba Render.");
+    }
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(data.detail || "Error al comunicarse con el servidor.");
+    }
+
     return data;
   }
-  function normalize(s){return String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");}
-  function productText(p){return normalize([p.id,p.nombre,p.name,p.categoria,p.category,p.tipo,p.type,p.descripcion,p.description].filter(Boolean).join(" "));}
-  function includesAny(text, words){return (words||[]).some(w=>text.includes(normalize(w)));}
-  function classify(p){
-    const text=productText(p), rules=CFG.PRODUCT_RULES||{};
-    const explicit=normalize(p.tipo||p.type||p.categoria||p.category||"");
-    // Las reglas específicas se evalúan antes que las categorías generales.
-    if(includesAny(explicit,["cuenta completa","cuenta-completa","complete account"]) || includesAny(text,rules.completeAccounts)) return "completeAccounts";
-    if(includesAny(explicit,["perfil","profile"]) || includesAny(text,rules.profiles)) return "profiles";
-    if(includesAny(explicit,["suscripcion","suscripción","subscription"]) || includesAny(text,rules.subscriptions)) return "subscriptions";
-    if(includesAny(explicit,["aplicacion","aplicación","software"]) || includesAny(text,rules.applications)) return "applications";
-    if(includesAny(explicit,["juego","videojuego","gaming"]) || includesAny(text,rules.games)) return "games";
-    return "subscriptions";
-  }
-  function categoryLabel(key){return ({completeAccounts:"Cuentas completas",profiles:"Perfiles",subscriptions:"Suscripciones",applications:"Aplicaciones",games:"Videojuegos"})[key]||"Productos";}
-  function iconFor(p){
-    const t=productText(p), pairs=[["netflix","🎬"],["spotify","🎵"],["disney","🏰"],["max","🎞️"],["amazon","📺"],["youtube","▶️"],["canva","🎨"],["capcut","✂️"],["chatgpt","🤖"],["gemini","✨"],["steam","🕹️"],["xbox","🎮"],["playstation","🎮"],["gta","🚗"],["crunchyroll","🍥"],["duolingo","🦉"]];
-    const found=pairs.find(x=>t.includes(x[0]));return found?found[1]:"✨";
-  }
-  function productName(p){return p.nombre||p.name||p.id||"Producto digital";}
-  function productPrice(p){return p.precio===null||p.precio===undefined?"Consultar precio":money(p.precio);}
-  function productDescription(p){return p.descripcion||p.description||"Confirma modalidad, duración, disponibilidad y condiciones antes de realizar el pago.";}
 
-  async function loadCatalog(){
-    const grid=$("products"); if(!grid)return;
-    grid.innerHTML='<p class="intro">Cargando catálogo...</p>';
-    try{
-      const data=await api("/api/catalog");
-      if(!Array.isArray(data))throw new Error("El catálogo no tiene el formato esperado.");
-      products=data;
-      const pageKey=document.body.dataset.category||"all";
-      const selected=products.filter(p=>pageKey==="all"||classify(p)===pageKey);
-      renderProducts(selected);
-    }catch(e){grid.innerHTML="";grid.insertAdjacentHTML("beforeend",'<p class="empty"></p>');grid.querySelector(".empty").textContent="No se pudo cargar el catálogo: "+e.message;}
+  function saveSession(result) {
+    if (!result || !result.token) {
+      throw new Error("El servidor no entregó el token de acceso.");
+    }
+
+    token = result.token;
+    localStorage.setItem("krma_token", token);
   }
-  function renderProducts(list){
-    const grid=$("products"), search=$("search"), count=$("resultCount"), empty=$("empty");
-    if(!grid)return;
-    const q=normalize(search?search.value:"");
-    const filtered=list.filter(p=>!q||productText(p).includes(q));
-    grid.innerHTML="";
-    filtered.forEach(p=>{
-      const card=document.createElement("article");card.className="product-card";
-      const head=document.createElement("div");head.className="product-head";
-      const icon=document.createElement("div");icon.className="product-icon";icon.textContent=iconFor(p);
-      const titleBox=document.createElement("div"),tag=document.createElement("span");tag.className="product-tag";tag.textContent=categoryLabel(classify(p));
-      const title=document.createElement("h3");title.textContent=productName(p);titleBox.append(tag,title);head.append(icon,titleBox);
-      const desc=document.createElement("p");desc.textContent=productDescription(p);
-      const price=document.createElement("div");price.className="price";price.textContent=productPrice(p);
-      const actions=document.createElement("div");actions.className="product-actions";
-      const buy=document.createElement("button");buy.className="buy";buy.textContent="🟢 CREAR PEDIDO / WHATSAPP";buy.addEventListener("click",()=>buyProduct(p));
-      const pay=document.createElement("a");pay.className="pay-product";pay.href=WOMPI;pay.target="_blank";pay.rel="noopener noreferrer";pay.textContent="💳 ABRIR PAGO WOMPI";
-      actions.append(buy,pay);card.append(head,desc,price,actions);grid.append(card);
+
+  function showLoggedOut() {
+    if ($("authPanel")) $("authPanel").classList.remove("hidden");
+    if ($("profilePanel")) $("profilePanel").classList.add("hidden");
+  }
+
+  function showLoggedIn() {
+    if ($("authPanel")) $("authPanel").classList.add("hidden");
+    if ($("profilePanel")) $("profilePanel").classList.remove("hidden");
+  }
+
+  // REGISTRO DE USUARIOS
+
+  async function register() {
+    const name = $("regName")?.value.trim() || "";
+    const email = $("regEmail")?.value.trim() || "";
+    const password = $("regPassword")?.value || "";
+    const accepted = $("acceptPolicy")?.checked || false;
+
+    if (!name || !email || password.length < 10) {
+      showError("Completa nombre, correo y contraseña de mínimo 10 caracteres.");
+      return;
+    }
+
+    if (!accepted) {
+      showError("Debes aceptar el tratamiento de datos personales.");
+      return;
+    }
+
+    try {
+      const result = await api("/api/register", {
+        method: "POST",
+        body: JSON.stringify({
+          name,
+          email,
+          password
+        })
+      });
+
+      saveSession(result);
+      showMessage("¡Tu cuenta KRMA VERSO fue creada correctamente!");
+      await loadProfile();
+
+    } catch (error) {
+      showError(error.message);
+    }
+  }
+
+  // INICIO DE SESIÓN
+
+  async function login() {
+    const email = $("loginEmail")?.value.trim() || "";
+    const password = $("loginPassword")?.value || "";
+
+    if (!email || !password) {
+      showError("Escribe tu correo y contraseña.");
+      return;
+    }
+
+    try {
+      const result = await api("/api/login", {
+        method: "POST",
+        body: JSON.stringify({
+          email,
+          password
+        })
+      });
+
+      saveSession(result);
+
+      showMessage("¡Bienvenido de nuevo a KRMA VERSO!");
+      await loadProfile();
+
+    } catch (error) {
+      showError(error.message);
+    }
+  }
+
+  // CERRAR SESIÓN
+
+  function logout() {
+    token = "";
+    localStorage.removeItem("krma_token");
+    adminSecret = "";
+
+    showLoggedOut();
+    showMessage("Sesión cerrada correctamente.");
+  }
+
+  // PERFIL DEL USUARIO
+
+  async function loadProfile() {
+    if (!token) {
+      showLoggedOut();
+      return;
+    }
+
+    try {
+      const profile = await api("/api/me");
+
+      showLoggedIn();
+
+      if ($("profileName")) {
+        $("profileName").textContent = profile.name || "Cliente KRMA";
+      }
+
+      if ($("profileEmail")) {
+        $("profileEmail").textContent = profile.email || "";
+      }
+
+      if ($("referralCode")) {
+        $("referralCode").textContent = "Próximamente";
+      }
+
+      if ($("firstPurchase")) {
+        $("firstPurchase").textContent = "Beneficios próximamente disponibles";
+      }
+
+      if ($("myCoupons")) {
+        $("myCoupons").textContent = "Todavía no tienes cupones disponibles.";
+      }
+
+      await loadOrders();
+
+    } catch (error) {
+      token = "";
+      localStorage.removeItem("krma_token");
+      showLoggedOut();
+      showError("Tu sesión no está activa. Inicia sesión nuevamente.");
+    }
+  }
+
+  // PEDIDOS DEL USUARIO
+
+  async function loadOrders() {
+    const box = $("myOrders");
+    if (!box || !token) return;
+
+    try {
+      const orders = await api("/api/orders");
+
+      box.innerHTML = "";
+
+      if (!Array.isArray(orders) || orders.length === 0) {
+        box.textContent = "Todavía no tienes pedidos.";
+        return;
+      }
+
+      orders.forEach(order => {
+        const item = document.createElement("div");
+        item.className = "order";
+
+        const title = document.createElement("strong");
+        title.textContent = order.product_name || "Pedido KRMA";
+
+        const price = document.createElement("p");
+        price.textContent = "Total: " + money(order.total);
+
+        const status = document.createElement("p");
+        status.textContent = "Estado: " + String(order.status || "pendiente").toUpperCase();
+
+        item.append(title, price, status);
+        box.appendChild(item);
+      });
+
+    } catch (error) {
+      box.textContent = "No se pudieron cargar tus pedidos.";
+    }
+  }
+
+  // CATÁLOGO
+
+  function normalize(value) {
+    return String(value || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+  }
+
+  function productName(product) {
+    return product.name || product.nombre || "Producto digital";
+  }
+
+  function productDescription(product) {
+    return product.description || product.descripcion || "Consulta disponibilidad y condiciones.";
+  }
+
+  function productPrice(product) {
+    return product.price === null || product.price === undefined
+      ? "Consultar precio"
+      : money(product.price);
+  }
+
+  function iconFor(product) {
+    const text = normalize(productName(product));
+
+    const icons = [
+      ["netflix", "🎬"],
+      ["spotify", "🎵"],
+      ["disney", "🏰"],
+      ["max", "🎞️"],
+      ["youtube", "▶️"],
+      ["canva", "🎨"],
+      ["chatgpt", "🤖"],
+      ["xbox", "🎮"],
+      ["playstation", "🎮"],
+      ["steam", "🕹️"],
+      ["robux", "💎"],
+      ["free fire", "🔥"]
+    ];
+
+    const found = icons.find(item => text.includes(item[0]));
+    return found ? found[1] : "✨";
+  }
+
+  async function loadCatalog() {
+    const grid = $("products");
+    if (!grid) return;
+
+    grid.textContent = "Cargando catálogo...";
+
+    try {
+      const data = await api("/api/catalog");
+
+      if (!Array.isArray(data)) {
+        throw new Error("El catálogo tiene un formato incorrecto.");
+      }
+
+      products = data;
+      renderProducts(products);
+
+    } catch (error) {
+      grid.textContent = "No se pudo cargar el catálogo: " + error.message;
+    }
+  }
+
+  function renderProducts(list) {
+    const grid = $("products");
+    if (!grid) return;
+
+    const search = normalize($("search")?.value || "");
+    const filtered = list.filter(product => {
+      const text = normalize(
+        productName(product) + " " +
+        productDescription(product) + " " +
+        (product.category || "")
+      );
+
+      return !search || text.includes(search);
     });
-    if(count)count.textContent=filtered.length+" productos";
-    if(empty)empty.classList.toggle("hidden",filtered.length>0);
-  }
-  async function buyProduct(p){
-    if(p.precio===null||p.precio===undefined){window.open(WA+encodeURIComponent("Hola KrmaVerso Store. Quiero consultar disponibilidad y precio de: "+productName(p)),"_blank","noopener");return;}
-    if(!token){showMessage("Para crear un pedido debes iniciar sesión o registrarte.");location.href="cuenta.html#acceso";return;}
-    try{
-      const result=await api("/api/orders",{method:"POST",body:JSON.stringify({product_id:p.id})});
-      const msg="Hola KrmaVerso Store. Acabo de generar un pedido.\nProducto: "+result.product_name+"\nSubtotal: "+money(result.subtotal)+"\nDescuento: "+money(result.discount)+"\nTotal: "+money(result.total)+"\nNúmero de pedido: "+result.order_id+"\nQuiero confirmar disponibilidad y recibir instrucciones de pago.";
-      window.open(WA+encodeURIComponent(msg),"_blank","noopener");
-      showMessage("Pedido creado. Confirma el valor y las instrucciones por WhatsApp.");
-    }catch(e){showError(e.message);}
+
+    grid.innerHTML = "";
+
+    filtered.forEach(product => {
+      const card = document.createElement("article");
+      card.className = "product-card";
+
+      const head = document.createElement("div");
+      head.className = "product-head";
+
+      const icon = document.createElement("div");
+      icon.className = "product-icon";
+      icon.textContent = iconFor(product);
+
+      const titleBox = document.createElement("div");
+
+      const tag = document.createElement("span");
+      tag.className = "product-tag";
+      tag.textContent = product.category || "Producto digital";
+
+      const title = document.createElement("h3");
+      title.textContent = productName(product);
+
+      titleBox.append(tag, title);
+      head.append(icon, titleBox);
+
+      const description = document.createElement("p");
+      description.textContent = productDescription(product);
+
+      const price = document.createElement("div");
+      price.className = "price";
+      price.textContent = productPrice(product);
+
+      const actions = document.createElement("div");
+      actions.className = "product-actions";
+
+      const buy = document.createElement("button");
+      buy.className = "buy";
+      buy.textContent = "🟢 CREAR PEDIDO";
+      buy.addEventListener("click", () => buyProduct(product));
+
+      const pay = document.createElement("a");
+      pay.className = "pay-product";
+      pay.href = WOMPI || "#";
+      pay.target = "_blank";
+      pay.rel = "noopener noreferrer";
+      pay.textContent = "💳 ABRIR PAGO WOMPI";
+
+      actions.append(buy, pay);
+      card.append(head, description, price, actions);
+      grid.appendChild(card);
+    });
+
+    if ($("resultCount")) {
+      $("resultCount").textContent = filtered.length + " productos";
+    }
+
+    if ($("empty")) {
+      $("empty").classList.toggle("hidden", filtered.length > 0);
+    }
   }
 
-  function showLoggedOut(){if($("authPanel"))$("authPanel").classList.remove("hidden");if($("profilePanel"))$("profilePanel").classList.add("hidden");}
-  function showLoggedIn(){if($("authPanel"))$("authPanel").classList.add("hidden");if($("profilePanel"))$("profilePanel").classList.remove("hidden");}
-  function saveSession(result){token=result.access_token;localStorage.setItem("krma_token",token);}
-  async function register(){
-    const name=$("regName").value.trim(),email=$("regEmail").value.trim(),password=$("regPassword").value,accepted=$("acceptPolicy").checked;
-    if(!name||!email||password.length<10)return showError("Completa nombre, correo y contraseña de mínimo 10 caracteres.");
-    if(!accepted)return showError("Debes aceptar el tratamiento de datos personales.");
-    try{const result=await api("/api/auth/register",{method:"POST",body:JSON.stringify({name,email,password,referral_code:new URLSearchParams(location.search).get("ref")||null,accept_data_policy:true})});saveSession(result);showMessage("¡Cuenta creada correctamente!");await loadProfile();}
-    catch(e){showError(e.message);}
+  // CREAR PEDIDO
+
+  async function buyProduct(product) {
+    if (!token) {
+      showMessage("Inicia sesión para crear un pedido.");
+      location.href = "cuenta.html#acceso";
+      return;
+    }
+
+    if (product.price === null || product.price === undefined) {
+      window.open(
+        WA + encodeURIComponent("Hola KRMA VERSO. Quiero consultar el precio de: " + productName(product)),
+        "_blank"
+      );
+      return;
+    }
+
+    try {
+      const profile = await api("/api/me");
+
+      const result = await api("/api/orders", {
+        method: "POST",
+        body: JSON.stringify({
+          customer_name: profile.name,
+          customer_email: profile.email,
+          product_name: productName(product),
+          quantity: 1,
+          total: Number(product.price)
+        })
+      });
+
+      const message =
+        "Hola KRMA VERSO Store. Acabo de generar un pedido." +
+        "\nProducto: " + productName(product) +
+        "\nTotal: " + money(product.price) +
+        "\nNúmero de pedido: " + result.order_id +
+        "\nQuiero confirmar disponibilidad e instrucciones de pago.";
+
+      window.open(WA + encodeURIComponent(message), "_blank");
+
+      showMessage("Pedido creado correctamente.");
+      await loadOrders();
+
+    } catch (error) {
+      showError(error.message);
+    }
   }
-  async function login(){
-    const email=$("loginEmail").value.trim(),password=$("loginPassword").value;
-    if(!email||!password)return showError("Escribe tu correo y contraseña.");
-    try{const result=await api("/api/auth/login",{method:"POST",body:JSON.stringify({email,password})});saveSession(result);showMessage("¡Bienvenido de nuevo a KrmaVerso!");await loadProfile();}
-    catch(e){showError(e.message);}
+
+  // ADMINISTRACIÓN
+
+  async function loadAdmin() {
+    const secret = $("adminSecret")?.value.trim() || "";
+
+    if (!secret) {
+      showError("Introduce tu clave administrativa.");
+      return;
+    }
+
+    adminSecret = secret;
+
+    const box = $("adminOrders");
+    if (!box) return;
+
+    box.textContent = "Cargando pedidos...";
+
+    try {
+      const response = await fetch(API + "/api/admin/orders", {
+        headers: {
+          "X-Admin-Secret": adminSecret
+        }
+      });
+
+      const data = await response.json().catch(() => []);
+
+      if (!response.ok) {
+        throw new Error(data.detail || "No se pudieron consultar los pedidos.");
+      }
+
+      box.innerHTML = "";
+
+      if (!data.length) {
+        box.textContent = "No hay pedidos.";
+        return;
+      }
+
+      data.forEach(order => {
+        const item = document.createElement("div");
+        item.className = "order";
+
+        const title = document.createElement("strong");
+        title.textContent = order.product_name;
+
+        const details = document.createElement("p");
+        details.textContent =
+          "Cliente: " + (order.customer_name || "Cliente") +
+          " · Total: " + money(order.total) +
+          " · Pedido: " + order.id;
+
+        const button = document.createElement("button");
+        button.className = "btn btn-green";
+        button.textContent = "CONFIRMAR PAGO RECIBIDO";
+
+        button.addEventListener("click", async () => {
+          if (!confirm("Confirma únicamente si verificaste que el dinero llegó. ¿Confirmas el pago?")) {
+            return;
+          }
+
+          try {
+            const result = await fetch(
+              API + "/api/admin/orders/" + encodeURIComponent(order.id) + "/paid",
+              {
+                method: "PATCH",
+                headers: {
+                  "X-Admin-Secret": adminSecret
+                }
+              }
+            );
+
+            const answer = await result.json().catch(() => ({}));
+
+            if (!result.ok) {
+              throw new Error(answer.detail || "No se pudo confirmar el pago.");
+            }
+
+            showMessage("Pago confirmado.");
+            await loadAdmin();
+
+          } catch (error) {
+            showError(error.message);
+          }
+        });
+
+        item.append(title, details, button);
+        box.appendChild(item);
+      });
+
+    } catch (error) {
+      box.textContent = "";
+      showError(error.message);
+    }
   }
-  async function logout(){token="";localStorage.removeItem("krma_token");adminSecret="";showLoggedOut();showMessage("Sesión cerrada correctamente.");}
-  function renderCoupons(coupons){
-    const box=$("myCoupons");if(!box)return;box.innerHTML="";
-    if(!coupons.length){box.textContent="Todavía no tienes cupones disponibles.";return;}
-    coupons.forEach(c=>{const d=document.createElement("div");d.className="coupon";const title=document.createElement("strong");title.textContent=c.code;const p=document.createElement("p");p.textContent="Descuento: "+money(c.amount_off)+" · Vence: "+new Date(c.expires_at).toLocaleDateString("es-CO");const b=document.createElement("button");b.className="btn btn-secondary";b.textContent="COPIAR CÓDIGO";b.onclick=async()=>{try{await navigator.clipboard.writeText(c.code);showMessage("Cupón copiado.");}catch{showMessage("Tu cupón es: "+c.code);}};d.append(title,p,b);box.append(d);});
+
+  // EVENTOS DE LA PÁGINA
+
+  function bind() {
+    if ($("registerBtn")) {
+      $("registerBtn").addEventListener("click", register);
+    }
+
+    if ($("loginBtn")) {
+      $("loginBtn").addEventListener("click", login);
+    }
+
+    if ($("logoutBtn")) {
+      $("logoutBtn").addEventListener("click", logout);
+    }
+
+    if ($("refreshProfileBtn")) {
+      $("refreshProfileBtn").addEventListener("click", loadProfile);
+    }
+
+    if ($("search")) {
+      $("search").addEventListener("input", () => renderProducts(products));
+    }
+
+    if ($("loadAdminBtn")) {
+      $("loadAdminBtn").addEventListener("click", loadAdmin);
+    }
+
+    if ($("hideAdminBtn")) {
+      $("hideAdminBtn").addEventListener("click", () => {
+        if ($("adminPanel")) $("adminPanel").classList.add("hidden");
+        if ($("adminSecret")) $("adminSecret").value = "";
+        if ($("adminOrders")) $("adminOrders").innerHTML = "";
+        adminSecret = "";
+      });
+    }
+
+    if ($("showAdminBtn")) {
+      $("showAdminBtn").addEventListener("click", () => {
+        if ($("adminPanel")) {
+          $("adminPanel").classList.remove("hidden");
+          $("adminPanel").scrollIntoView({ behavior: "smooth" });
+        }
+      });
+    }
   }
-  function renderOrders(orders){
-    const box=$("myOrders");if(!box)return;box.innerHTML="";
-    if(!orders.length){box.textContent="Todavía no tienes pedidos.";return;}
-    orders.forEach(o=>{const d=document.createElement("div");d.className="order";const n=document.createElement("strong");n.textContent=o.product_name;const p=document.createElement("p");p.textContent="Subtotal: "+money(o.subtotal)+" · Descuento: "+money(o.discount)+" · Total: "+money(o.total);const s=document.createElement("p");s.textContent="Estado: "+String(o.status).toUpperCase();d.append(n,p,s);
-      if(o.status==="pending"){const b=document.createElement("button");b.className="btn btn-danger";b.textContent="CANCELAR PEDIDO";b.onclick=async()=>{if(!confirm("¿Deseas cancelar este pedido pendiente?"))return;try{await api("/api/orders/"+encodeURIComponent(o.id)+"/cancel",{method:"POST"});showMessage("Pedido cancelado.");await loadProfile();}catch(e){showError(e.message);}};d.append(b);}box.append(d);});
-  }
-  async function loadProfile(){
-    if(!token){showLoggedOut();return;}
-    try{const p=await api("/api/me");showLoggedIn();if($("profileName"))$("profileName").textContent=p.name||"Cliente KRMA";if($("profileEmail"))$("profileEmail").textContent=p.email||"";if($("referralCode"))$("referralCode").textContent=p.referral_code||"Pendiente";if($("firstPurchase"))$("firstPurchase").textContent=p.first_purchase_available?"¡Tienes 10% de descuento!":"Beneficio de primera compra utilizado";renderCoupons(p.coupons||[]);renderOrders(p.orders||[]);if($("copyReferralBtn")&&p.referral_link)$("copyReferralBtn").dataset.link=p.referral_link;}
-    catch(e){token="";localStorage.removeItem("krma_token");showLoggedOut();showError("Tu sesión no está activa. Inicia sesión nuevamente.");}
-  }
-  async function loadAdmin(){
-    const secret=$("adminSecret").value.trim();if(!secret)return showError("Introduce tu clave administrativa.");
-    adminSecret=secret;const box=$("adminOrders");box.textContent="Cargando pedidos...";
-    try{const r=await fetch(API+"/api/admin/orders",{headers:{"X-Admin-Secret":adminSecret}});const data=await r.json().catch(()=>[]);if(!r.ok)throw new Error(data.detail||"No fue posible consultar los pedidos.");box.innerHTML="";
-      if(!data.length){box.textContent="No hay pedidos pendientes.";return;}
-      data.forEach(o=>{const d=document.createElement("div");d.className="order";const t=document.createElement("strong");t.textContent=o.product_name;const p=document.createElement("p");p.textContent="Cliente ID: "+o.user_id+" · Total: "+money(o.total)+" · Pedido: "+o.id;const b=document.createElement("button");b.className="btn btn-green";b.textContent="CONFIRMAR PAGO RECIBIDO";b.onclick=async()=>{if(!confirm("Confirma únicamente si verificaste que el dinero llegó a tu cuenta Wompi. ¿Confirmas el pago?"))return;try{const rr=await fetch(API+"/api/admin/orders/"+encodeURIComponent(o.id)+"/paid",{method:"POST",headers:{"X-Admin-Secret":adminSecret}});const x=await rr.json().catch(()=>({}));if(!rr.ok)throw new Error(x.detail||"No se pudo confirmar el pago.");showMessage("Pago confirmado.");await loadAdmin();}catch(e){showError(e.message);}};d.append(t,p,b);box.append(d);});
-    }catch(e){box.textContent="";showError(e.message);}
-  }
-  function bind(){
-    if($("search"))$("search").addEventListener("input",loadSearch);
-    if($("registerBtn"))$("registerBtn").addEventListener("click",register);
-    if($("loginBtn"))$("loginBtn").addEventListener("click",login);
-    if($("logoutBtn"))$("logoutBtn").addEventListener("click",logout);
-    if($("refreshProfileBtn"))$("refreshProfileBtn").addEventListener("click",loadProfile);
-    if($("copyReferralBtn"))$("copyReferralBtn").addEventListener("click",async()=>{const link=$("copyReferralBtn").dataset.link;if(!link)return showError("No se encontró tu enlace de referido.");try{await navigator.clipboard.writeText(link);showMessage("¡Enlace de referido copiado!");}catch{showMessage("Tu enlace: "+link);}});
-    if($("loadAdminBtn"))$("loadAdminBtn").addEventListener("click",loadAdmin);
-    if($("hideAdminBtn"))$("hideAdminBtn").addEventListener("click",()=>{$("adminPanel").classList.add("hidden");$("adminSecret").value="";$("adminOrders").innerHTML="";adminSecret="";});
-    if($("showAdminBtn"))$("showAdminBtn").addEventListener("click",()=>{$("adminPanel").classList.remove("hidden");$("adminPanel").scrollIntoView({behavior:"smooth"});});
-  }
-  let allForSearch=[];
-  function loadSearch(){const key=document.body.dataset.category||"all";renderProducts(products.filter(p=>key==="all"||classify(p)===key));}
-  async function init(){
+
+  // INICIAR APLICACIÓN
+
+  async function init() {
     bind();
-    if($("products"))await loadCatalog();
-    if($("authPanel")){if(token)await loadProfile();else showLoggedOut();}
+
+    if ($("products")) {
+      await loadCatalog();
+    }
+
+    if ($("authPanel")) {
+      if (token) {
+        await loadProfile();
+      } else {
+        showLoggedOut();
+      }
+    }
   }
-  document.addEventListener("DOMContentLoaded",init);
+
+  document.addEventListener("DOMContentLoaded", init);
+
 })();
