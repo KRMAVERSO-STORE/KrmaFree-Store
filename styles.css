@@ -37,3 +37,10 @@ p{line-height:1.65}.muted,.intro{color:var(--muted)}.intro{line-height:1.75}
 .qr{background:white;border-radius:18px;padding:14px;text-align:center;max-width:270px;width:100%;margin:auto}.qr img{display:block;width:100%;height:auto}.qr strong{display:block;color:#151525;margin:12px 0 6px}.qr a{color:#32206c;overflow-wrap:anywhere;font-size:.82rem;font-weight:800}
 footer{text-align:center;color:var(--muted);padding:25px;border-top:1px solid #29264d;font-size:.85rem}
 @media(max-width:760px){.two-col,.payment-card{grid-template-columns:1fr}.nav{justify-content:center}.nav-links{justify-content:center}.wrap{padding-top:22px}}
+
+/* Tarjetas premium de marcas: logos reconocibles y acentos propios */
+.product-icon.brand-icon{background:linear-gradient(145deg,var(--brand-color),color-mix(in srgb,var(--brand-color),#080817 48%));border:1px solid color-mix(in srgb,var(--brand-color),white 35%);box-shadow:0 0 18px color-mix(in srgb,var(--brand-color),transparent 48%),inset 0 1px 0 #ffffff45;animation:brandGlow 3.5s ease-in-out infinite}
+.product-logo{width:29px;height:29px;object-fit:contain;filter:drop-shadow(0 2px 4px #0008)}
+.product-card{position:relative;overflow:hidden}
+.product-card:before{content:"";position:absolute;inset:0 0 auto;height:2px;background:linear-gradient(90deg,transparent,var(--cyan),var(--purple),transparent);opacity:.7}
+@keyframes brandGlow{0%,100%{box-shadow:0 0 10px color-mix(in srgb,var(--brand-color),transparent 62%)}50%{box-shadow:0 0 21px color-mix(in srgb,var(--brand-color),transparent 36%)}}
