@@ -329,7 +329,8 @@
       "suscripciones": ["suscripcion", "suscripciones", "subscription"],
       "cuentas": ["perfil", "perfiles", "cuenta", "cuentas"],
       "perfiles": ["perfil", "perfiles", "cuenta", "cuentas"],
-      "aplicaciones": ["aplicacion", "aplicaciones", "productividad", "educacion", "inteligencia artificial"],
+      "aplicaciones": ["aplicacion", "aplicaciones", "productividad", "educacion"],
+      "inteligencia-artificial": ["inteligencia artificial", "inteligencia-artificial", "ia", "ai"],
       "juegos": ["videojuego", "videojuegos", "juegos", "gaming"]
     })[page] || [];
 
@@ -340,6 +341,16 @@
       const name = normalize(productName(product));
       return ["perfil", "perfiles", "cuenta", "cuentas"].some(value => category.includes(value)) ||
         /(^|\b)(pantalla|compartida|invitacion)(\b|$)/.test(name);
+    };
+
+    const isAIProduct = product => {
+      const category = normalize(product.category || "");
+      const name = normalize(productName(product));
+      const description = normalize(productDescription(product));
+      const aiCategory = category.includes("inteligencia artificial") || category.includes("inteligencia-artificial") || category === "ia" || category === "ai";
+      const aiName = /chatgpt|openai|gemini|google ai|claude|midjourney|copilot|perplexity|deepseek|character ai|leonardo ai|runway|elevenlabs|notion ai|mistral ai|grok|suno ai/.test(name);
+      const aiDescription = /inteligencia artificial|asistente ia|modelo de lenguaje|generador de imagenes con ia/.test(description);
+      return aiCategory || aiName || aiDescription;
     };
 
     const filtered = list.filter(product => {
@@ -354,6 +365,8 @@
       // Las demás páginas conservan sus filtros por categoría.
       if (page === "perfiles" || page === "cuentas") matchesCategory = true;
       if (page === "suscripciones") matchesCategory = matchesCategory && !isProfileAccess(product);
+      if (page === "aplicaciones") matchesCategory = matchesCategory && !isAIProduct(product);
+      if (page === "inteligencia-artificial") matchesCategory = isAIProduct(product);
       return matchesCategory && (!search || text.includes(search));
     });
 
