@@ -276,26 +276,38 @@
       : money(product.price);
   }
 
-  function iconFor(product) {
-    const text = normalize(productName(product));
-
-    const icons = [
-      ["netflix", "🎬"],
-      ["spotify", "🎵"],
-      ["disney", "🏰"],
-      ["max", "🎞️"],
-      ["youtube", "▶️"],
-      ["canva", "🎨"],
-      ["chatgpt", "🤖"],
-      ["xbox", "🎮"],
-      ["playstation", "🎮"],
-      ["steam", "🕹️"],
-      ["robux", "💎"],
-      ["free fire", "🔥"]
+  function brandFor(product) {
+    const text = normalize(productName(product) + " " + (product.category || ""));
+    const brands = [
+      [/netflix/, "netflix", "E50914", "🎬"],
+      [/spotify/, "spotify", "1DB954", "🎵"],
+      [/disney/, "disneyplus", "113CCF", "🏰"],
+      [/\bmax\b|hbo/, "hbo", "5822B4", "🎞️"],
+      [/youtube/, "youtube", "FF0033", "▶️"],
+      [/canva/, "canva", "00C4CC", "🎨"],
+      [/chatgpt|openai/, "openai", "10A37F", "🤖"],
+      [/gemini/, "googlegemini", "8E75B2", "✨"],
+      [/claude/, "claude", "D97757", "🤖"],
+      [/amazon|prime video/, "primevideo", "00A8E1", "📦"],
+      [/paramount/, "paramountplus", "0064FF", "⛰️"],
+      [/crunchyroll/, "crunchyroll", "F47521", "🍥"],
+      [/capcut/, "capcut", "111111", "✂️"],
+      [/filmora/, "filmora", "00AEEF", "🎬"],
+      [/deezer/, "deezer", "FEAA2D", "🎧"],
+      [/duolingo/, "duolingo", "58CC02", "🦉"],
+      [/tiktok/, "tiktok", "111111", "♪"],
+      [/twitch/, "twitch", "9146FF", "🎮"],
+      [/xbox/, "xbox", "107C10", "🎮"],
+      [/playstation/, "playstation", "003791", "🎮"],
+      [/steam/, "steam", "171A21", "🕹️"],
+      [/free fire/, "garena", "E53935", "🔥"]
     ];
+    return brands.find(item => item[0].test(text)) || null;
+  }
 
-    const found = icons.find(item => text.includes(item[0]));
-    return found ? found[1] : "✨";
+  function iconFor(product) {
+    const brand = brandFor(product);
+    return brand ? brand[3] : "✨";
   }
 
   async function loadCatalog() {
@@ -385,13 +397,29 @@
 
       const icon = document.createElement("div");
       icon.className = "product-icon";
-      icon.textContent = iconFor(product);
+      const brand = brandFor(product);
+      if (brand) {
+        icon.classList.add("brand-icon");
+        icon.style.setProperty("--brand-color", "#" + brand[2]);
+        const logo = document.createElement("img");
+        logo.className = "product-logo";
+        logo.src = "https://cdn.simpleicons.org/" + brand[1] + "/FFFFFF";
+        logo.alt = brand[1] + " logo";
+        logo.loading = "lazy";
+        logo.onerror = () => {
+          icon.textContent = iconFor(product);
+          icon.classList.remove("brand-icon");
+        };
+        icon.appendChild(logo);
+      } else {
+        icon.textContent = iconFor(product);
+      }
 
       const titleBox = document.createElement("div");
 
       const tag = document.createElement("span");
       tag.className = "product-tag";
-      tag.textContent = ["perfil", "perfiles", "cuenta", "cuentas"].includes(normalize(product.category || "")) ? "Cuentas y perfiles" : (product.category || "Producto digital");
+      tag.textContent = (page === "perfiles" || page === "cuentas") ? (product.category || "Suscripciones, perfiles y cuentas") : (product.category || "Producto digital");
 
       const title = document.createElement("h3");
       title.textContent = productName(product);
