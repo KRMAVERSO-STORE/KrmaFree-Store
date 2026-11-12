@@ -933,6 +933,9 @@ def admin_get_orders(
             "total": order.total,
             "status": order.status,
             "payment_reference": order.payment_reference,
+            "reseller_id": order.reseller_id,
+            "reseller_slug": order.reseller_slug,
+            "reseller_profit": order.reseller_profit,
             "created_at": order.created_at.isoformat(),
         }
         for order in orders
