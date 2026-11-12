@@ -345,49 +345,83 @@
 
     const search = normalize($("search")?.value || "");
     const page = normalize(location.pathname.split("/").pop().replace(/\.html$/, ""));
-    const pageCategory = ({
-      "suscripciones": ["suscripcion", "suscripciones", "subscription"],
-      "cuentas": ["perfil", "perfiles", "cuenta", "cuentas"],
-      "perfiles": ["perfil", "perfiles", "cuenta", "cuentas"],
-      "aplicaciones": ["aplicacion", "aplicaciones", "productividad", "educacion"],
-      "inteligencia-artificial": ["inteligencia artificial", "inteligencia-artificial", "ia", "ai"],
-      "juegos": ["videojuego", "videojuegos", "juegos", "gaming"]
-    })[page] || [];
 
-    // Modalidades de acceso individual del catálogo Stream Crack.
-    // Se muestran en PERFILES sin cambiar precios ni categorías guardadas.
-    const isProfileAccess = product => {
-      const category = normalize(product.category || "");
-      const name = normalize(productName(product));
-      return ["perfil", "perfiles", "cuenta", "cuentas"].some(value => category.includes(value)) ||
-        /(^|\b)(pantalla|compartida|invitacion)(\b|$)/.test(name);
+    // La categoría guardada en el catálogo tiene prioridad.
+    // Así, una "pantalla" de Suscripciones no termina mezclada en Perfiles.
+    const categoryOf = product => normalize(product.category || product.categoria || "");
+    const nameOf = product => normalize(productName(product));
+    const knownCategory = category => {
+      if (!category) return "";
+      if (/perfil|profile|cuenta|account/.test(category)) return "profiles";
+      if (/suscrip|subscription/.test(category)) return "subscriptions";
+      if (/inteligencia.?artificial|^ia$|^ai$/.test(category)) return "artificial-intelligence";
+      if (/aplicacion|software|productividad|educacion|education/.test(category)) return "applications";
+      if (/juego|videojuego|gaming|^games?$/.test(category)) return "games";
+      if (/tecnologia|technology|accesorios|celulares/.test(category)) return "technology";
+      return "";
     };
 
     const isAIProduct = product => {
-      const category = normalize(product.category || "");
-      const name = normalize(productName(product));
+      const category = categoryOf(product);
+      const name = nameOf(product);
       const description = normalize(productDescription(product));
-      const aiCategory = category.includes("inteligencia artificial") || category.includes("inteligencia-artificial") || category === "ia" || category === "ai";
-      const aiName = /chatgpt|openai|gemini|google ai|claude|midjourney|copilot|perplexity|deepseek|character ai|leonardo ai|runway|elevenlabs|notion ai|mistral ai|grok|suno ai/.test(name);
-      const aiDescription = /inteligencia artificial|asistente ia|modelo de lenguaje|generador de imagenes con ia/.test(description);
-      return aiCategory || aiName || aiDescription;
+      return /inteligencia.?artificial|^ia$|^ai$/.test(category) ||
+        /chatgpt|openai|gemini|google ai|claude|midjourney|copilot|perplexity|deepseek|character ai|leonardo ai|runway|elevenlabs|notion ai|mistral ai|grok|suno ai/.test(name) ||
+        /inteligencia artificial|asistente ia|modelo de lenguaje|generador de imagenes con ia/.test(description);
+    };
+
+    const isProfileProduct = product => {
+      const category = categoryOf(product);
+      const explicit = knownCategory(category);
+      if (explicit) return explicit === "profiles";
+      return /perfil|profile|cuenta completa|cuenta individual|full account|usuario individual/.test(nameOf(product));
+    };
+
+    const isSubscriptionProduct = product => {
+      const category = categoryOf(product);
+      const explicit = knownCategory(category);
+      if (explicit) return explicit === "subscriptions";
+      return /suscrip|subscription|plan mensual|mensualidad|premium|estandar|normal/.test(nameOf(product));
+    };
+
+    const isApplicationProduct = product => {
+      const category = categoryOf(product);
+      const explicit = knownCategory(category);
+      if (explicit) return explicit === "applications";
+      return /canva|capcut|filmora|office|google one|duolingo|surfshark|qbittorrent|loquendo|obs studio|launcher/.test(nameOf(product));
+    };
+
+    const isGameProduct = product => {
+      const category = categoryOf(product);
+      const explicit = knownCategory(category);
+      if (explicit) return explicit === "games";
+      return /steam|xbox|playstation|gta|fc 26|minecraft|videojuego|recarga para juegos/.test(nameOf(product));
+    };
+
+    const isTechnologyProduct = product => {
+      const category = categoryOf(product);
+      const explicit = knownCategory(category);
+      if (explicit) return explicit === "technology";
+      return /celulares nuevos|accesorios tecnologicos|accesorios para celular/.test(nameOf(product));
+    };
+
+    const matchesPage = product => {
+      if (page === "perfiles" || page === "cuentas") return isProfileProduct(product);
+      if (page === "suscripciones") return isSubscriptionProduct(product);
+      if (page === "aplicaciones") return isApplicationProduct(product) && !isAIProduct(product);
+      if (page === "inteligencia-artificial") return isAIProduct(product);
+      if (page === "juegos") return isGameProduct(product);
+      if (page === "tecnologia") return isTechnologyProduct(product);
+      return true;
     };
 
     const filtered = list.filter(product => {
-      const category = normalize(product.category || "");
       const text = normalize(
         productName(product) + " " +
         productDescription(product) + " " +
-        (product.category || "")
+        (product.category || product.categoria || "")
       );
-      let matchesCategory = !pageCategory.length || pageCategory.some(value => category.includes(normalize(value)));
-      // La página PERFILES reúne el catálogo completo de 55 productos.
-      // Las demás páginas conservan sus filtros por categoría.
-      if (page === "perfiles" || page === "cuentas") matchesCategory = true;
-      if (page === "suscripciones") matchesCategory = matchesCategory && !isProfileAccess(product);
-      if (page === "aplicaciones") matchesCategory = matchesCategory && !isAIProduct(product);
-      if (page === "inteligencia-artificial") matchesCategory = isAIProduct(product);
-      return matchesCategory && (!search || text.includes(search));
+      return matchesPage(product) && (!search || text.includes(search));
     });
 
     grid.innerHTML = "";
@@ -409,7 +443,6 @@
       if (brand) {
         icon.classList.add("brand-icon");
         icon.style.setProperty("--brand-color", "#" + brand[2]);
-        // Wordmark local: no depende de un CDN externo que pueda bloquearse.
         const logo = document.createElement("span");
         logo.className = "product-logo product-wordmark";
         logo.setAttribute("aria-label", brand[1] + " logo");
@@ -427,14 +460,12 @@
       }
 
       const titleBox = document.createElement("div");
-
       const tag = document.createElement("span");
       tag.className = "product-tag";
-      tag.textContent = (page === "perfiles" || page === "cuentas") ? (product.category || "Suscripciones, perfiles y cuentas") : (product.category || "Producto digital");
+      tag.textContent = product.category || product.categoria || "Producto digital";
 
       const title = document.createElement("h3");
       title.textContent = productName(product);
-
       titleBox.append(tag, title);
       head.append(icon, titleBox);
 
