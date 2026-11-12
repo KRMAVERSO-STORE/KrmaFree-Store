@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#070817"><meta name="description" content="KrmaVerso Store: catálogo digital de servicios, cuentas, perfiles, suscripciones, aplicaciones y videojuegos."><title>Mi cuenta | KrmaVerso Store</title><link rel="stylesheet" href="styles.css?v=20261112-krma-feed-referrals"><script src="config.js"></script><script defer src="app.js?v=20261112-krma-feed-referrals"></script></head>
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#070817"><meta name="description" content="KrmaVerso Store: catálogo digital de servicios, cuentas, perfiles, suscripciones, aplicaciones y videojuegos."><title>Mi cuenta | KrmaVerso Store</title><link rel="stylesheet" href="styles.css?v=20261112-resellers"><script src="config.js"></script><script defer src="app.js?v=20261112-resellers"></script></head>
 <body><header class="site-header"><nav class="nav">
 <a class="brand" href="index.html">🌌 <span>KRMA</span>VERSO STORE</a>
 <div class="nav-links">
-<a href="index.html">Inicio</a><a href="perfiles.html">Suscripciones, perfiles y cuentas</a><a href="aplicaciones.html">Aplicaciones</a><a href="inteligencia-artificial.html">Inteligencia artificial</a><a href="juegos.html">Juegos</a><a class="nav-cta" href="cuenta.html">Mi cuenta</a>
+<a href="index.html">Inicio</a><a href="perfiles.html">Suscripciones, perfiles y cuentas</a><a href="aplicaciones.html">Aplicaciones</a><a href="inteligencia-artificial.html">Inteligencia artificial</a><a href="juegos.html">Juegos</a><a href="revendedores.html">Revendedores</a><a class="nav-cta" href="cuenta.html">Mi cuenta</a>
 </div></nav></header><main class="wrap">
 <section class="hero"><div class="eyebrow">Área de clientes</div><h1>👤 Mi cuenta KrmaVerso</h1><p class="intro">Regístrate o inicia sesión para consultar tus pedidos y los beneficios que se habiliten en tu cuenta.</p></section>
 <section id="acceso" class="panel"><div id="authPanel" class="form-grid">
@@ -24,7 +24,7 @@
 <div class="box"><h2>🎁 Mis cupones</h2><div id="myCoupons">Cargando...</div></div>
 <div class="box"><h2>🧾 Mis pedidos</h2><div id="myOrders">Cargando...</div></div>
 <div class="box"><h2>🤝 Invita a tus amigos y gana</h2><p class="intro">Comparte tu enlace personal. Cuando un amigo se registre con tu enlace y su primera compra sea confirmada por KRMA VERSO, ambos reciben un cupón de <strong>$3.000 COP</strong>, válido por <strong>90 días</strong>.</p><p class="muted">Tu código y tus cupones se guardan en tu cuenta. Puedes usar un cupón al crear un pedido.</p></div>
-<div class="form-actions"><button id="refreshProfileBtn" class="btn btn-secondary">ACTUALIZAR MI CUENTA</button><button id="showAdminBtn" class="btn btn-secondary" type="button">ADMINISTRACIÓN</button><button id="logoutBtn" class="btn btn-danger">CERRAR SESIÓN</button></div>
+<div class="form-actions"><button id="refreshProfileBtn" class="btn btn-secondary">ACTUALIZAR MI CUENTA</button><button id="showAdminBtn" class="btn btn-secondary" type="button">ADMINISTRACIÓN</button><a class="btn btn-secondary" href="mi-tienda.html">MI TIENDA REVENDEDOR</a><a class="btn btn-secondary" href="admin-revendedores.html">ADMIN KRMA BUSINESS</a><button id="logoutBtn" class="btn btn-danger">CERRAR SESIÓN</button></div>
 </div>
 <div id="adminPanel" class="box hidden"><h2>🛠️ Administración</h2><p class="intro">Confirma manualmente los pagos recibidos. Esta sección utiliza la clave administrativa configurada en el servidor.</p><div class="field"><label for="adminSecret">Clave administrativa</label><input id="adminSecret" type="password" placeholder="ADMIN_SECRET" autocomplete="off"></div><div class="form-actions"><button id="loadAdminBtn" class="btn btn-primary">CARGAR PEDIDOS</button><button id="hideAdminBtn" class="btn btn-secondary">OCULTAR</button></div><div id="adminOrders"></div></div>
 <div id="message" class="message hidden" role="status"></div><div id="error" class="error hidden" role="alert"></div>
