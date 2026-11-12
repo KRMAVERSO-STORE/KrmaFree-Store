@@ -207,6 +207,7 @@ def startup():
     with engine.begin() as connection:
         connection.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS referral_code VARCHAR(24)"))
         connection.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS referred_by_user_id INTEGER REFERENCES users(id)"))
+        connection.execute(text("CREATE UNIQUE INDEX IF NOT EXISTS ix_users_referral_code ON users (referral_code)"))
         connection.execute(text("ALTER TABLE orders ADD COLUMN IF NOT EXISTS discount FLOAT NOT NULL DEFAULT 0"))
         connection.execute(text("ALTER TABLE orders ADD COLUMN IF NOT EXISTS coupon_id INTEGER REFERENCES coupons(id)"))
 
