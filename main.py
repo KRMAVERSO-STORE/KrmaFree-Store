@@ -772,7 +772,7 @@ def reseller_dashboard(db: Session = Depends(get_db), user: User = Depends(get_c
     prices = {p.product_id: p.retail_price for p in db.query(ResellerProductPrice).filter(ResellerProductPrice.reseller_id == user.id).all()}
     return {
         "applied": True, "status": store.status, "store_name": store.store_name, "slug": store.slug,
-        "store_url": "https://krmaverso-store.github.io/KrmaFree-Store/tienda.html?tienda=" + store.slug,
+        "store_url": "https://krmaverso-store.github.io/KrmaFree-Store/tienda-revendedor.html?tienda=" + store.slug,
         "balance": round(earned - withdrawn, 2), "total_earned": round(earned, 2),
         "paid_sales": len(paid),
         "orders": [{"id": o.id, "product_name": o.product_name, "total": o.total, "profit": o.reseller_profit or 0, "status": o.status, "created_at": o.created_at.isoformat()} for o in orders],
