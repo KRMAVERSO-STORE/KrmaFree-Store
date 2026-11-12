@@ -212,6 +212,8 @@
       }
 
       await loadOrders();
+      const nextPage = new URLSearchParams(location.search).get("return");
+      if (nextPage && !nextPage.includes("://")) { location.href = nextPage; return; }
 
     } catch (error) {
       token = "";
