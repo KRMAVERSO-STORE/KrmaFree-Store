@@ -417,6 +417,16 @@ def get_catalog(db: Session = Depends(get_db)):
     ]
 
 
+
+@app.get("/api/admin/products")
+def admin_get_products(db: Session = Depends(get_db), admin: bool = Depends(verify_admin)):
+    products = db.query(Product).order_by(Product.id.desc()).all()
+    return [{
+        "id": p.id, "name": p.name, "price": p.price,
+        "wholesale_price": p.wholesale_price, "active": p.active,
+    } for p in products]
+
+
 @app.post("/api/admin/products")
 def create_product(
     data: ProductData,
@@ -617,6 +627,8 @@ def create_order(
 
     coupon = None
     discount = 0.0
+    if data.reseller_slug and data.coupon_code:
+        raise HTTPException(status_code=400, detail="Los cupones KRMA no se pueden combinar con ventas de tiendas revendedoras.")
     if data.coupon_code:
         coupon = db.query(Coupon).filter(
             Coupon.code == data.coupon_code.strip().upper(),
