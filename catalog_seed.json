@@ -8,26 +8,18 @@
     "active": true
   },
   {
+    "name": "Netflix — Plan/perfil (30 días)",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Perfiles",
+    "price": 15500,
+    "image": "",
+    "active": true
+  },
+  {
     "name": "Netflix — Plan/perfil (33 días)",
     "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
     "category": "Perfiles",
-    "price": 14000,
-    "image": "",
-    "active": true
-  },
-  {
-    "name": "Netflix — Plan/perfil (29 días)",
-    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
-    "category": "Perfiles",
-    "price": 14500,
-    "image": "",
-    "active": true
-  },
-  {
-    "name": "Netflix — Internacional",
-    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
-    "category": "Perfiles",
-    "price": 12500,
+    "price": 16500,
     "image": "",
     "active": true
   },
@@ -40,10 +32,18 @@
     "active": true
   },
   {
+    "name": "Netflix — Perfil privado",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Perfiles",
+    "price": 12500,
+    "image": "",
+    "active": true
+  },
+  {
     "name": "Amazon Prime Video — Pantalla",
     "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
     "category": "Perfiles",
-    "price": 10000,
+    "price": 7000,
     "image": "",
     "active": true
   },
@@ -59,7 +59,15 @@
     "name": "Max / HBO Max",
     "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
     "category": "Suscripciones",
-    "price": 10000,
+    "price": 6000,
+    "image": "",
+    "active": true
+  },
+  {
+    "name": "Max / HBO Max PLATINUM",
+    "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
+    "category": "Suscripciones",
+    "price": 8000,
     "image": "",
     "active": true
   },
@@ -67,7 +75,7 @@
     "name": "Disney+ — Premium",
     "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
     "category": "Suscripciones",
-    "price": 18000,
+    "price": 9000,
     "image": "",
     "active": true
   },
@@ -75,7 +83,7 @@
     "name": "Disney+ — Estándar",
     "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
     "category": "Suscripciones",
-    "price": 15000,
+    "price": 6000,
     "image": "",
     "active": true
   },
@@ -83,7 +91,7 @@
     "name": "Paramount+ — Pantalla",
     "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
     "category": "Suscripciones",
-    "price": 15000,
+    "price": 9000,
     "image": "",
     "active": true
   },
@@ -91,7 +99,7 @@
     "name": "ViX Premium — Pantalla",
     "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
     "category": "Suscripciones",
-    "price": 10000,
+    "price": 6000,
     "image": "",
     "active": true
   },
@@ -99,7 +107,7 @@
     "name": "Crunchyroll — Pantalla",
     "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
     "category": "Suscripciones",
-    "price": 8000,
+    "price": 6000,
     "image": "",
     "active": true
   },
@@ -115,7 +123,7 @@
     "name": "Jellyfin",
     "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
     "category": "Suscripciones",
-    "price": 9500,
+    "price": 7000,
     "image": "",
     "active": true
   },
@@ -123,7 +131,7 @@
     "name": "Tele Latino",
     "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
     "category": "Suscripciones",
-    "price": 10000,
+    "price": 7000,
     "image": "",
     "active": true
   },
@@ -131,23 +139,23 @@
     "name": "Viki — Pantalla",
     "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
     "category": "Suscripciones",
-    "price": 8500,
+    "price": 7000,
     "image": "",
     "active": true
   },
   {
-    "name": "YouTube Premium — Familiar",
+    "name": "YouTube Premium — 1 MES",
     "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
     "category": "Suscripciones",
-    "price": 15000,
+    "price": 10000,
     "image": "",
     "active": true
   },
   {
-    "name": "YouTube Premium — Invitación",
+    "name": "YouTube Premium — 2 MESES",
     "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
     "category": "Suscripciones",
-    "price": 15000,
+    "price": 16000,
     "image": "",
     "active": true
   },
@@ -155,7 +163,7 @@
     "name": "Spotify Premium — 3 meses",
     "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
     "category": "Suscripciones",
-    "price": 21000,
+    "price": 26000,
     "image": "",
     "active": true
   },
@@ -219,7 +227,7 @@
     "name": "ChatGPT Go — Compartida",
     "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
     "category": "Aplicaciones",
-    "price": 20000,
+    "price": 13000,
     "image": "",
     "active": true
   },
@@ -243,7 +251,7 @@
     "name": "Canva Pro",
     "description": "Consulta disponibilidad, modalidad y condiciones antes de realizar el pedido.",
     "category": "Aplicaciones",
-    "price": 6000,
+    "price": 13000,
     "image": "",
     "active": true
   },
