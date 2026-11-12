@@ -327,8 +327,8 @@
     const page = normalize(location.pathname.split("/").pop().replace(/\.html$/, ""));
     const pageCategory = ({
       "suscripciones": ["suscripcion", "suscripciones", "subscription"],
-      "cuentas": ["cuenta completa", "cuentas completas", "cuentas"],
-      "perfiles": ["perfil", "perfiles"],
+      "cuentas": ["perfil", "perfiles", "cuenta", "cuentas"],
+      "perfiles": ["perfil", "perfiles", "cuenta", "cuentas"],
       "aplicaciones": ["aplicacion", "aplicaciones", "productividad", "educacion", "inteligencia artificial"],
       "juegos": ["videojuego", "videojuegos", "juegos", "gaming"]
     })[page] || [];
@@ -361,7 +361,7 @@
 
       const tag = document.createElement("span");
       tag.className = "product-tag";
-      tag.textContent = product.category || "Producto digital";
+      tag.textContent = ["perfil", "perfiles", "cuenta", "cuentas"].includes(normalize(product.category || "")) ? "Cuentas y perfiles" : (product.category || "Producto digital");
 
       const title = document.createElement("h3");
       title.textContent = productName(product);
