@@ -588,18 +588,12 @@ def create_order(
     if data.quantity < 1:
         raise HTTPException(status_code=400, detail="Cantidad inválida")
 
-    # El precio y el nombre siempre se toman del catálogo del servidor.
+    # El precio y el nombre siempre se toman del catálogo y la tienda del servidor.
     if data.product_id is not None:
         product = db.query(Product).filter(Product.id == data.product_id, Product.active == True).first()
         if not product:
             raise HTTPException(status_code=404, detail="Producto no encontrado o no disponible")
         product_name = product.name
-        if product.price is None:
-            raise HTTPException(
-                status_code=400,
-                detail="Este producto requiere confirmar el precio por WhatsApp",
-            )
-        total = float(product.price) * data.quantity
         reseller = None
         reseller_slug = (data.reseller_slug or "").strip().lower()
         wholesale_total = 0.0
@@ -618,14 +612,24 @@ def create_order(
                 ResellerProductPrice.reseller_id == store.user_id,
                 ResellerProductPrice.product_id == product.id,
             ).first()
-            retail_price = float(custom_price.retail_price) if custom_price else float(product.price)
-            if retail_price < wholesale_total / data.quantity:
+            selected_price = custom_price.retail_price if custom_price else product.price
+            if selected_price is None:
+                raise HTTPException(status_code=400, detail="El revendedor todavía no configuró el precio de este producto.")
+            retail_price = float(selected_price)
+            if retail_price < float(product.wholesale_price):
                 raise HTTPException(status_code=400, detail="El precio de venta no puede ser inferior al precio mayorista.")
             total = retail_price * data.quantity
             if reseller.id == user.id:
                 raise HTTPException(status_code=400, detail="No puedes realizar pedidos desde tu propia tienda.")
+        else:
+            if product.price is None:
+                raise HTTPException(
+                    status_code=400,
+                    detail="Este producto requiere confirmar el precio por WhatsApp",
+                )
+            total = float(product.price) * data.quantity
     else:
-        # Compatibilidad temporal con clientes antiguos; no confiar en precios enviados por el navegador.
+        # No confiar en precios enviados por el navegador.
         raise HTTPException(status_code=400, detail="Debes seleccionar un producto válido del catálogo")
 
     coupon = None
