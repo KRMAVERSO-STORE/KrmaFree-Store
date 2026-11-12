@@ -600,10 +600,13 @@ def create_order(
                 detail="Este producto requiere confirmar el precio por WhatsApp",
             )
         total = float(product.price) * data.quantity
-        wholesale_total = float(product.wholesale_price or 0) * data.quantity
         reseller = None
         reseller_slug = (data.reseller_slug or "").strip().lower()
+        wholesale_total = 0.0
         if reseller_slug:
+            if product.wholesale_price is None:
+                raise HTTPException(status_code=400, detail="Este producto aún no tiene precio mayorista configurado.")
+            wholesale_total = float(product.wholesale_price) * data.quantity
             store = db.query(ResellerStore).filter(
                 ResellerStore.slug == reseller_slug,
                 ResellerStore.status == "aprobado",
@@ -768,7 +771,7 @@ def reseller_dashboard(db: Session = Depends(get_db), user: User = Depends(get_c
     earned = sum(float(o.reseller_profit or 0) for o in paid)
     withdrawals = db.query(ResellerWithdrawal).filter(ResellerWithdrawal.reseller_id == user.id).all()
     withdrawn = sum(float(w.amount) for w in withdrawals if w.status in ("pendiente", "aprobado", "pagado"))
-    products = db.query(Product).filter(Product.active == True).order_by(Product.id.desc()).all()
+    products = db.query(Product).filter(Product.active == True, Product.wholesale_price.isnot(None)).order_by(Product.id.desc()).all()
     prices = {p.product_id: p.retail_price for p in db.query(ResellerProductPrice).filter(ResellerProductPrice.reseller_id == user.id).all()}
     return {
         "applied": True, "status": store.status, "store_name": store.store_name, "slug": store.slug,
@@ -791,7 +794,9 @@ def set_reseller_price(data: ResellerPriceData, db: Session = Depends(get_db), u
     product = db.query(Product).filter(Product.id == data.product_id, Product.active == True).first()
     if not product:
         raise HTTPException(status_code=404, detail="Producto no encontrado.")
-    wholesale = float(product.wholesale_price if product.wholesale_price is not None else product.price or 0)
+    if product.wholesale_price is None:
+        raise HTTPException(status_code=400, detail="Este producto aún no tiene precio mayorista configurado.")
+    wholesale = float(product.wholesale_price)
     if data.retail_price < wholesale:
         raise HTTPException(status_code=400, detail="Tu precio de venta debe ser igual o superior al mayorista.")
     price = db.query(ResellerProductPrice).filter(ResellerProductPrice.reseller_id == user.id, ResellerProductPrice.product_id == product.id).first()
@@ -808,7 +813,7 @@ def public_reseller_store(slug: str, db: Session = Depends(get_db)):
     store = db.query(ResellerStore).filter(ResellerStore.slug == slug.lower(), ResellerStore.status == "aprobado").first()
     if not store:
         raise HTTPException(status_code=404, detail="Tienda no encontrada.")
-    products = db.query(Product).filter(Product.active == True).order_by(Product.id.desc()).all()
+    products = db.query(Product).filter(Product.active == True, Product.wholesale_price.isnot(None)).order_by(Product.id.desc()).all()
     prices = {p.product_id: p.retail_price for p in db.query(ResellerProductPrice).filter(ResellerProductPrice.reseller_id == store.user_id).all()}
     return {
         "store_name": store.store_name,
