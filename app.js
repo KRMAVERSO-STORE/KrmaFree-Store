@@ -371,32 +371,22 @@
         /inteligencia artificial|asistente ia|modelo de lenguaje|generador de imagenes con ia/.test(description);
     };
 
-    const isProfileProduct = product => {
-      const category = categoryOf(product);
-      const explicit = knownCategory(category);
-      if (explicit) return explicit === "profiles";
-      return /perfil|profile|pantalla|usuario individual/.test(nameOf(product));
-    };
-
+    // KRMAVERSO: las plataformas digitales comerciales se muestran en Perfiles.
+    // Aplicaciones se reserva para software/herramientas de PC; Cuentas solo para cuentas completas.
     const isCompleteAccountProduct = product => {
       const category = categoryOf(product);
       const explicit = knownCategory(category);
       if (explicit) return explicit === "accounts";
-      return /cuenta completa|cuenta full|cuenta-entera|full account|cuenta individual|account complete|completa/.test(nameOf(product));
-    };
-
-    const isSubscriptionProduct = product => {
-      const category = categoryOf(product);
-      const explicit = knownCategory(category);
-      if (explicit) return explicit === "subscriptions";
-      return /suscrip|subscription|plan mensual|mensualidad|premium|estandar|normal/.test(nameOf(product));
+      return /cuenta completa|cuenta full|cuenta-entera|full account|account complete/.test(nameOf(product));
     };
 
     const isApplicationProduct = product => {
       const category = categoryOf(product);
       const explicit = knownCategory(category);
       if (explicit) return explicit === "applications";
-      return /canva|capcut|filmora|office|google one|duolingo|surfshark|qbittorrent|loquendo|obs studio|launcher/.test(nameOf(product));
+      const name = nameOf(product);
+      const description = normalize(productDescription(product));
+      return /software pc|aplicacion pc|programa pc|herramienta pc|pc bajos recursos|bajos recursos|low.?end|optimizado para pc|portable|launcher|obs studio|qbittorrent|loquendo|filmora|capcut/.test(name + " " + description);
     };
 
     const isGameProduct = product => {
@@ -413,11 +403,21 @@
       return /celulares nuevos|accesorios tecnologicos|accesorios para celular/.test(nameOf(product));
     };
 
+    const isProfileProduct = product => {
+      const category = categoryOf(product);
+      const explicit = knownCategory(category);
+      if (explicit === "accounts" || explicit === "applications" || explicit === "games" || explicit === "technology") return false;
+      if (isCompleteAccountProduct(product) || isApplicationProduct(product) || isGameProduct(product) || isTechnologyProduct(product)) return false;
+      // Plataformas de streaming, música, IA y servicios digitales: todos van aquí,
+      // incluso si en la base están etiquetados como suscripción o Digital.
+      return true;
+    };
+
     const matchesPage = product => {
-      if (page === "perfiles") return isProfileProduct(product) && !isAIProduct(product);
-      if (page === "cuentas") return isCompleteAccountProduct(product) && !isAIProduct(product);
+      if (page === "perfiles") return isProfileProduct(product);
+      if (page === "cuentas") return isCompleteAccountProduct(product);
       if (page === "suscripciones") return isSubscriptionProduct(product);
-      if (page === "aplicaciones") return isApplicationProduct(product) && !isAIProduct(product);
+      if (page === "aplicaciones") return isApplicationProduct(product);
       if (page === "inteligencia-artificial") return isAIProduct(product);
       if (page === "juegos") return isGameProduct(product);
       if (page === "tecnologia") return isTechnologyProduct(product);
