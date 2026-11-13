@@ -352,7 +352,8 @@
     const nameOf = product => normalize(productName(product));
     const knownCategory = category => {
       if (!category) return "";
-      if (/perfil|profile|cuenta|account/.test(category)) return "profiles";
+      if (/perfil|profile/.test(category)) return "profiles";
+      if (/cuenta|account/.test(category)) return "accounts";
       if (/suscrip|subscription/.test(category)) return "subscriptions";
       if (/inteligencia.?artificial|^ia$|^ai$/.test(category)) return "artificial-intelligence";
       if (/aplicacion|software|productividad|educacion|education/.test(category)) return "applications";
@@ -374,7 +375,14 @@
       const category = categoryOf(product);
       const explicit = knownCategory(category);
       if (explicit) return explicit === "profiles";
-      return /perfil|profile|cuenta completa|cuenta individual|full account|usuario individual/.test(nameOf(product));
+      return /perfil|profile|pantalla|usuario individual/.test(nameOf(product));
+    };
+
+    const isCompleteAccountProduct = product => {
+      const category = categoryOf(product);
+      const explicit = knownCategory(category);
+      if (explicit) return explicit === "accounts";
+      return /cuenta completa|cuenta full|cuenta-entera|full account|cuenta individual|account complete|completa/.test(nameOf(product));
     };
 
     const isSubscriptionProduct = product => {
@@ -406,8 +414,8 @@
     };
 
     const matchesPage = product => {
-      if (page === "perfiles") return !isAIProduct(product) && !isApplicationProduct(product) && !isGameProduct(product) && !isTechnologyProduct(product);
-      if (page === "cuentas") return false;
+      if (page === "perfiles") return isProfileProduct(product) && !isAIProduct(product);
+      if (page === "cuentas") return isCompleteAccountProduct(product) && !isAIProduct(product);
       if (page === "suscripciones") return isSubscriptionProduct(product);
       if (page === "aplicaciones") return isApplicationProduct(product) && !isAIProduct(product);
       if (page === "inteligencia-artificial") return isAIProduct(product);
