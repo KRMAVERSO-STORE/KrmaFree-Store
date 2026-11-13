@@ -129,3 +129,112 @@ footer{text-align:center;color:var(--muted);padding:25px;border-top:1px solid #2
 .inline-field{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.inline-field input{max-width:190px}
 .reseller-product .muted{margin:6px 0 0}.reseller-product input{min-width:125px}
 @media(max-width:620px){.reseller-product{align-items:stretch;flex-direction:column}.inline-field input{flex:1;max-width:none}}
+
+
+/* ==========================================================
+   KRMA VERSO · CUENTAS COSMOS — visual premium responsive
+   ========================================================== */
+.accounts-page{
+ --cosmos-bg:#080711;--cosmos-panel:#11101c;--cosmos-violet:#a66cff;--cosmos-blue:#55baff;
+ background:radial-gradient(ellipse at 78% 8%,#2b1745 0,transparent 34%),radial-gradient(ellipse at 5% 44%,#101d36 0,transparent 30%),var(--cosmos-bg);
+ color:#f8f6ff;overflow-x:hidden
+}
+.accounts-page .site-header{background:#090812eF;border-bottom:1px solid #ffffff13;box-shadow:0 12px 35px #0005}
+.accounts-page .nav{max-width:1400px;padding-top:17px;padding-bottom:17px}
+.accounts-page .brand{font-size:.95rem;letter-spacing:.07em;white-space:nowrap}
+.accounts-page .brand span:not(.brand-orbit){color:#b98cff}
+.accounts-page .brand small{font:700 .58rem Inter,sans-serif;letter-spacing:.25em;color:#8c879f;margin-left:5px}
+.accounts-page .brand-orbit{color:#65d9ff;margin-right:7px}
+.accounts-page .nav-links{gap:8px}
+.accounts-page .nav-links a{padding:10px 11px;border-radius:10px;color:#bdb7cc;font-size:.76rem;transition:.2s}
+.accounts-page .nav-links a:hover,.accounts-page .nav-links a.active:not(.nav-cta){background:#ffffff0c;color:#fff!important;border:1px solid #b18aff55;box-shadow:inset 0 0 18px #9d64ff12}
+.accounts-page .nav-links a.nav-cta{padding:10px 15px!important}
+.accounts-wrap{max-width:1400px;padding-top:35px}
+.accounts-hero{position:relative;isolation:isolate;overflow:hidden;min-height:460px;padding:clamp(28px,5vw,66px);border:1px solid #b18aff35;border-radius:28px;background:linear-gradient(110deg,#15101f 0%,#151329 48%,#111b31 100%);box-shadow:0 25px 80px #0007,inset 0 1px #ffffff12}
+.accounts-hero:before{content:"";position:absolute;z-index:-1;width:520px;height:520px;right:3%;top:-35%;border-radius:50%;background:radial-gradient(circle,#9e62ff24 0,#5b80ff12 40%,transparent 70%);filter:blur(8px)}
+.accounts-hero-grid{position:absolute;inset:0;z-index:-1;opacity:.22;background-image:linear-gradient(#ffffff0a 1px,transparent 1px),linear-gradient(90deg,#ffffff0a 1px,transparent 1px);background-size:44px 44px;mask-image:linear-gradient(90deg,transparent,#000 55%,#000)}
+.accounts-copy{position:relative;z-index:2;max-width:660px}
+.accounts-kicker{display:flex;align-items:center;gap:9px;color:#bca0ff;font-size:.68rem;font-weight:800;letter-spacing:.19em}
+.accounts-kicker>span{width:7px;height:7px;border-radius:50%;background:#6de5c0;box-shadow:0 0 12px #6de5c0}
+.accounts-overline{margin:38px 0 12px;color:#7e829e;font-size:.68rem;font-weight:800;letter-spacing:.25em}
+.accounts-hero h1{font:700 clamp(2.1rem,5.4vw,4.4rem)/1.12 Inter,sans-serif;letter-spacing:-.055em;color:#fff;margin:0;max-width:700px}
+.accounts-hero h1 em,.accounts-intro h2 em{font-style:normal;background:linear-gradient(100deg,#c69aff,#73d9ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.accounts-lead{max-width:570px;color:#b8b4c8;font-size:.98rem;line-height:1.8;margin:20px 0 0}
+.accounts-actions{display:flex;align-items:center;gap:22px;flex-wrap:wrap;margin-top:27px}
+.accounts-page .accounts-actions .btn,.accounts-page .accounts-footer-panel .btn{font-size:.72rem!important;letter-spacing:.08em!important;background:linear-gradient(110deg,#a34dff,#566fff 55%,#36bde8)!important;color:#fff!important;border:1px solid #d5baff66!important;box-shadow:0 9px 30px #824cff38!important}
+.accounts-ghost{color:#e6e0f3;font-size:.82rem;font-weight:700}.accounts-ghost span{color:#9b85c8;margin-left:5px}
+.accounts-trust{display:flex;gap:22px;flex-wrap:wrap;margin-top:38px;color:#89869c;font-size:.7rem}
+.accounts-trust i{font-style:normal;color:#a98aff;margin-right:6px}
+.accounts-planet{position:absolute;width:min(42vw,470px);aspect-ratio:1;right:5%;top:50%;transform:translateY(-50%);display:grid;place-items:center;pointer-events:none}
+.planet-halo{position:absolute;inset:8%;border-radius:50%;background:radial-gradient(circle,#a56bff32,transparent 67%);filter:blur(18px)}
+.planet-core{position:relative;width:48%;aspect-ratio:1;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 32% 25%,#b7b1ff,#5e55a5 22%,#211d43 62%,#0c0d1d 100%);border:1px solid #e0caff9c;box-shadow:inset -22px -18px 38px #050611aa,0 0 65px #9b66ff65;color:#fff}
+.planet-core span{font:800 .72rem Orbitron,sans-serif;letter-spacing:.2em}.planet-core b{font:800 4.2rem Inter,sans-serif;line-height:1;color:#e7d8ff;text-shadow:0 0 22px #b68cff}
+.planet-ring{position:absolute;width:100%;height:31%;border:2px solid #bda1ff9c;border-radius:50%;transform:rotate(-24deg);box-shadow:0 0 17px #a56cff55,inset 0 0 12px #a56cff22}
+.ring-two{width:112%;height:43%;border-color:#69cfff66;transform:rotate(24deg)}
+.planet-orbit-dot{position:absolute;width:11px;height:11px;right:15%;top:23%;border-radius:50%;background:#7ee4ff;box-shadow:0 0 20px #7ee4ff}
+.hero-index{position:absolute;right:27px;bottom:24px;color:#77728b;font:700 .65rem Orbitron,sans-serif;letter-spacing:.15em}
+.hero-index span{color:#b18aff;margin:0 8px}
+.accounts-intro{display:flex;justify-content:space-between;align-items:end;gap:25px;margin:62px 0 25px}
+.accounts-intro h2,.accounts-footer-panel h2{font:700 clamp(1.55rem,3.3vw,2.35rem) Inter,sans-serif;letter-spacing:-.045em;margin:12px 0;color:#f7f4ff}
+.accounts-intro p,.accounts-footer-panel p{margin:0;color:#9691a7;font-size:.88rem}
+.accounts-note{display:flex;align-items:center;gap:12px;max-width:300px;padding:14px 17px;border:1px solid #ffffff14;border-radius:14px;background:#ffffff06}
+.accounts-note>span{font-size:1.5rem;color:#b58aff}
+.accounts-note strong,.accounts-note small{display:block}.accounts-note strong{font-size:.76rem;color:#e9e2f8}.accounts-note small{font-size:.68rem;line-height:1.5;color:#918ba3;margin-top:4px}
+.accounts-toolbar{display:flex;align-items:center;gap:15px;margin:22px 0 18px}
+.accounts-search{display:flex;align-items:center;gap:12px;flex:1;min-width:0;padding:0 16px;height:54px;border:1px solid #ffffff1b;border-radius:14px;background:#100f1b;box-shadow:inset 0 1px #ffffff08}
+.accounts-search>span{font-size:1.65rem;color:#a98aff}
+.accounts-search input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:#fff;font-size:.84rem}
+.accounts-search input::placeholder{color:#777286}
+.accounts-search kbd{white-space:nowrap;padding:4px 7px;border:1px solid #ffffff1c;border-radius:6px;color:#8d879d;font-size:.63rem}
+.accounts-count{white-space:nowrap;color:#a79eb9;font-size:.72rem}
+.accounts-grid{grid-template-columns:repeat(auto-fill,minmax(235px,1fr));gap:17px}
+.accounts-page .product-card{min-height:290px;padding:19px;border:1px solid #ffffff16;border-radius:19px;background:linear-gradient(155deg,#171523,#100f19 75%);box-shadow:0 12px 30px #0003;transition:transform .25s,border-color .25s,box-shadow .25s}
+.accounts-page .product-card:before{height:1px;background:linear-gradient(90deg,transparent,#b88aff,#66d5ff,transparent);opacity:.65}
+.accounts-page .product-card:hover{transform:translateY(-5px);border-color:#a77bff80;box-shadow:0 18px 38px #0006,0 0 24px #8e55ff18}
+.accounts-page .product-head{align-items:center;gap:13px;margin:5px 0 18px}
+.accounts-page .product-icon.brand-icon{width:62px;height:62px;border-radius:17px;flex:none}
+.accounts-page .product-tag{font-size:.62rem;letter-spacing:.13em;color:#a98aff}
+.accounts-page .product-card h3{font:700 .94rem/1.4 Inter,sans-serif;color:#f6f2ff;overflow-wrap:anywhere}
+.accounts-page .product-card>p{font-size:.79rem;color:#a7a1b5;line-height:1.65}
+.accounts-page .price{font:800 1.18rem Inter,sans-serif;color:#fff;letter-spacing:-.03em}
+.accounts-page .product-actions{margin-top:14px}
+.accounts-page .product-card .buy,.accounts-page .product-card .pay-product{min-height:45px!important;font-size:.67rem!important;border-radius:11px!important}
+.accounts-page .product-card .pay-product{background:#ffffff08!important;color:#d8c9ff!important;border:1px solid #a98aff55!important;box-shadow:none!important}
+.accounts-footer-panel{display:flex;align-items:center;gap:22px;margin-top:65px;padding:26px;border:1px solid #a77bff38;border-radius:20px;background:linear-gradient(105deg,#211733,#151729 70%,#102130)}
+.accounts-footer-panel .footer-symbol{display:grid;place-items:center;width:55px;height:55px;flex:none;border-radius:16px;background:#a36aff20;color:#c5a4ff;font-size:1.8rem}
+.accounts-footer-panel>div:nth-child(2){flex:1}
+.accounts-footer-panel .accounts-kicker{font-size:.6rem}
+.accounts-footer-panel h2{font-size:1.25rem;margin:7px 0}
+.accounts-footer-panel p{font-size:.78rem}
+.accounts-page .notice{border-color:#ffffff17;background:#ffffff06;color:#a7a1b5}
+.accounts-page footer{border-color:#ffffff12;color:#8c879b}
+.accounts-page footer strong{color:#d7c7f6}
+@media(max-width:900px){.accounts-planet{right:-4%;opacity:.48}.accounts-copy{max-width:75%}.accounts-page .nav-links{justify-content:center}.accounts-page .nav{justify-content:center}}
+@media(max-width:650px){
+ .accounts-wrap{padding:20px 4% 50px}
+ .accounts-hero{min-height:520px;padding:25px 22px;border-radius:21px}
+ .accounts-copy{max-width:100%}.accounts-overline{margin-top:32px}
+ .accounts-hero h1{font-size:clamp(2.05rem,10vw,3.2rem)}
+ .accounts-lead{font-size:.87rem;max-width:95%}
+ .accounts-planet{width:230px;right:-65px;top:70%;opacity:.27}
+ .accounts-trust{gap:10px 17px;margin-top:28px;font-size:.63rem}
+ .hero-index{font-size:.55rem;right:17px;bottom:15px}
+ .accounts-intro{display:block;margin:42px 0 20px}
+ .accounts-note{margin-top:18px;max-width:none}
+ .accounts-toolbar{align-items:stretch;flex-direction:column;gap:9px}
+ .accounts-count{padding-left:4px}
+ .accounts-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ .accounts-page .product-card{min-height:270px;padding:13px;border-radius:15px}
+ .accounts-page .product-head{align-items:flex-start;gap:9px;flex-direction:column;margin-bottom:11px}
+ .accounts-page .product-icon.brand-icon{width:48px;height:48px;border-radius:13px}
+ .accounts-page .product-card h3{font-size:.78rem}
+ .accounts-page .product-card>p{font-size:.7rem}
+ .accounts-page .price{font-size:.96rem}
+ .accounts-page .product-card .buy,.accounts-page .product-card .pay-product{font-size:.58rem!important;padding:10px 6px!important;min-height:42px!important}
+ .accounts-footer-panel{align-items:flex-start;flex-wrap:wrap;margin-top:42px;padding:19px}
+ .accounts-footer-panel .btn{width:100%}
+ .accounts-page .nav-links{gap:4px}
+ .accounts-page .nav-links a{font-size:.68rem;padding:8px}
+}
+@media(max-width:370px){.accounts-grid{grid-template-columns:1fr}.accounts-page .product-head{flex-direction:row;align-items:center}.accounts-page .product-card{min-height:245px}}
+@media(prefers-reduced-motion:reduce){.accounts-page *{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
